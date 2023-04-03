@@ -1,3 +1,6 @@
+# prefect artifacts
+.prefectignore
+
 # MacOS
 .DS_Store
 
@@ -137,3 +140,26 @@ dmypy.json
 .vscode/
 .tmp/
 *-deployment.yaml
+.github/
+docs/
+infrastructure/
+.gitignore
+.pre-commit-config.yaml
+Dockerfile
+LICENSE
+setup.py
+task-definition.json
+*.md
+*.txt
+*.bash
+*.log
+dbt_*/etc/
+dbt_*/target/
+dbt_*/dbt_modules/
+dbt_*/logs/
+dbt_*/**/.DS_Store
+dbt_*/.idea/
+dbt_*/.vscode/
+dbt_*/.gitignore/
+dbt_*/README.md/
+deploy.py
