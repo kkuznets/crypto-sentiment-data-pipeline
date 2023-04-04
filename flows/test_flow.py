@@ -10,4 +10,4 @@ def test_flow(user_input: str = "World"):
 
 
 if __name__ == "__main__":
-    hello()
+    test_flow()

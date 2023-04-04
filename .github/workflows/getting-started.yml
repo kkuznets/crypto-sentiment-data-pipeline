@@ -1,4 +1,4 @@
-name: "All-in-one: GCP & Prefect Cloud - getting started"
+name: "Build & Deploy VM & Flows"
 on:
   workflow_dispatch:
     inputs:
