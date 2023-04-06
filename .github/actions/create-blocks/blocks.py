@@ -21,13 +21,13 @@ parser.add_argument("--region", default="us-central1")
 args = parser.parse_args()
 
 gh = GitHub(repository=args.repo, reference=args.branch)
-gh.save(args.gh_block_name, overwrite=True)
+gh.save(args.storage_block, overwrite=True)
 
 block = CloudRunJob(
     image=args.image,
     region=args.region,
-    credentials=GcpCredentials.load(args.gcp_block_name),
+    credentials=GcpCredentials.load(args.gcp_creds_block),
     cpu=1,
     timeout=3600,
 )
-block.save(args.crj_block_name, overwrite=True)
+block.save(args.infrastructure_block, overwrite=True)
