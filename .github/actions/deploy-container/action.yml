@@ -36,7 +36,7 @@ inputs:
   machine_name:
     description: 'GCP Compute Engine instance name'
     required: false
-    default: 'binance-transactions'
+    default: "binance-transactions"
 runs:
   using: "composite"
   steps:

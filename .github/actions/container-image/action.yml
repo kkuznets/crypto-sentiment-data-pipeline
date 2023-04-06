@@ -41,7 +41,7 @@ runs:
       uses: google-github-actions/setup-gcloud@v1
 
     - id: repository
-      run: gcloud artifacts repositories create ${{ inputs.artifact_repository }} --repository-format=docker --location=${{ inputs.region }}
+      run: gcloud artifacts repositories create ${{ inputs.artifact_repository }} --location=${{ inputs.region }} --repository-format=docker
       continue-on-error: true
       shell: bash
 
