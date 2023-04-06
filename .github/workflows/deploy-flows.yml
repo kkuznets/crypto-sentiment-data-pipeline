@@ -32,9 +32,9 @@ jobs:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
-          deployment: "default" # optional
-          queue: "default" # optional
-          storage_block: "github/default" # optional
-          infrastructure_block: "cloud-run-job/default" # optional
+          deployment: "default-deployment" # optional
+          queue: "default-queue" # optional
+          storage_block: "github/default-gh" # optional
+          infrastructure_block: "cloud-run-job/default-crj" # optional
           python_version: "3.10" # optional
           install_command: "pip install ." # optional
