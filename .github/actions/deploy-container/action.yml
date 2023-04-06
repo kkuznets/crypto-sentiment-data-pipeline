@@ -56,6 +56,7 @@ runs:
         artifact_repository: ${{ inputs.artifact_repository }}
         image_name: ${{ inputs.image_name }}
         region: ${{ inputs.region }}
+        gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
 
     - id: terminate-if-exists
       run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
