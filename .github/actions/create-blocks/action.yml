@@ -10,10 +10,18 @@ inputs:
   prefect_api_url:
     description: 'Prefect Cloud API URL'
     required: true
-  block_name:
-    description: 'Name of the GitHub, CloudRunJob and GcpCredentials blocks'
+  storage_block:
+    description: 'Name of the GitHub block'
     required: false
-    default: "default"
+    default: "default-gh"
+  infrastructure_block:
+    description: 'Name of the CloudRunJob block'
+    required: false
+    default: "default-crj"
+  gcp_creds_block:
+    description: 'Name of the GCP Credentials block'
+    required: false
+    default: "default-gcp"
   image_uri:
     description: 'Name of the AR image URI'
     required: true
@@ -21,7 +29,7 @@ inputs:
   region:
     description: GCP region
     required: true
-    default: 'us-east1'
+    default: 'us-central1'
   python_version:
     description: 'Python version'
     required: false
@@ -52,5 +60,5 @@ runs:
       shell: bash
 
     - id: create-blocks
-      run: python ${{ github.action_path }}/blocks.py -b $GITHUB_REF_NAME -r $GITHUB_SERVER_URL/$GITHUB_REPOSITORY -n ${{ inputs.block_name }} -i ${{ inputs.image_uri }} --region ${{ inputs.region }}
+      run: python ${{ github.action_path }}/blocks.py -b $GITHUB_REF_NAME -r $GITHUB_SERVER_URL/$GITHUB_REPOSITORY -n ${{ inputs.storage_block }} -i ${{ inputs.image_uri }} --gcp ${{ inputs.gcp_creds_block }} --crj ${{ inputs.infrastructure_block }} --region ${{ inputs.region }}
       shell: bash

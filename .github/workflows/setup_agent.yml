@@ -27,17 +27,17 @@ on:
         required: true
         default: 'e2-micro'
         type: string
-      gh_block_name:
+      storage_block:
         description: 'GitHub block name'
         required: false
         default: "default-gh"
         type: string
-      crj_block_name:
+      infrastructure_block:
         description: 'CloudRunJob block name'
         required: false
         default: "default-crj"
         type: string
-      gcp_creds_block_name:
+      gcp_creds_block:
         description: 'Name of the GcpCredentials block'
         required: false
         default: "default-gcp"
@@ -74,8 +74,8 @@ jobs:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           image_uri: ${{ env.IMAGE_URI }}
-          gh_block_name: ${{ github.event.inputs.gh_block_name }} # optional
-          crj_block_name: ${{ github.event.inputs.crj_block_name }} # optional
+          storage_block: ${{ github.event.inputs.storage_block }} # optional
+          infrastructure_block: ${{ github.event.inputs.infrastructure_block }} # optional
           region: ${{ github.event.inputs.region }}  # optional
 
   build-flows:
@@ -108,5 +108,5 @@ jobs:
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
           deployment: ${{ github.event.inputs.deployment }} # optional
           queue: ${{ github.event.inputs.queue }} # optional
-          storage_block: github/${{ github.event.inputs.gh_block_name }} # optional
-          infrastructure_block: cloud-run-job/${{ github.event.inputs.crj_block_name }} # optional
+          storage_block: github/${{ github.event.inputs.storage_block }} # optional
+          infrastructure_block: cloud-run-job/${{ github.event.inputs.infrastructure_block }} # optional
