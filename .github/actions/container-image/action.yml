@@ -16,11 +16,11 @@ inputs:
   region:
     description: 'GCP region'
     required: false
-    default: 'us-east1'
+    default: 'us-central1'
   artifact_repository:
     description: 'Artifact Registry Repository Name'
     required: false
-    default: prefect
+    default: binance-transactions
   image_name:
     description: 'Artifact Registry Image Name'
     required: false

@@ -70,7 +70,7 @@ jobs:
           artifact_repository: ${{ github.event.inputs.artifact_repository }}  # optional
           region: ${{ github.event.inputs.region }}  # optional
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          gcp_sa_email: ${{ secrets.GCP_SA_EMAIL }}
+          # gcp_sa_email: ${{ secrets.GCP_SA_EMAIL }}
           zone: ${{ github.event.inputs.zone }}  # optional
           machine_type: ${{ github.event.inputs.machine_type }}  # optional
 
@@ -114,5 +114,5 @@ jobs:
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
           deployment: ${{ github.event.inputs.deployment }} # optional
           queue: ${{ github.event.inputs.queue }} # optional
-          storage_block: github/${{ github.event.inputs.block_name }} # optional
-          infrastructure_block: cloud-run-job/${{ github.event.inputs.block_name }} # optional
+          storage_block: github/${{ github.event.inputs.gh_block_name }} # optional
+          infrastructure_block: cloud-run-job/${{ github.event.inputs.crj_block_name }} # optional
