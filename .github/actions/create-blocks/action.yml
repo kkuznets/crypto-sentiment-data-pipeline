@@ -1,4 +1,4 @@
-name: 'Prefect Blocks Quickstart'
+name: 'Prefect Blocks'
 description: 'Deploy CloudRunJob and GitHub blocks for serverless containerized execution'
 branding:
   icon: cloud
@@ -10,22 +10,20 @@ inputs:
   prefect_api_url:
     description: 'Prefect Cloud API URL'
     required: true
-  storage_block:
+  github_block_name:
     description: 'Name of the GitHub block'
     required: false
     default: "default-gh"
-  infrastructure_block:
+  cloudrun_block_name:
     description: 'Name of the CloudRunJob block'
     required: false
     default: "default-crj"
-  gcp_creds_block:
-    description: 'Name of the GCP Credentials block'
-    required: false
-    default: "default-gcp"
+  gcp_credentials_json:
+    description: 'Content of the Service Account JSON key file'
+    required: true
   image_uri:
     description: 'Name of the AR image URI'
     required: true
-    default: "us-east1-docker.pkg.dev/prefect-community/prefect/deployments:latest"
   region:
     description: GCP region
     required: true
@@ -60,5 +58,24 @@ runs:
       shell: bash
 
     - id: create-blocks
-      run: python ${{ github.action_path }}/blocks.py -b $GITHUB_REF_NAME -r $GITHUB_SERVER_URL/$GITHUB_REPOSITORY -n ${{ inputs.storage_block }} -i ${{ inputs.image_uri }} --gcp ${{ inputs.gcp_creds_block }} --crj ${{ inputs.infrastructure_block }} --region ${{ inputs.region }}
+      run: |
+        cat <<EOF > blocks.py
+        from prefect.filesystems import GitHub
+        from prefect_gcp.cloud_run import CloudRunJob
+        from prefect_gcp.credentials import GcpCredentials
+        
+        gh = GitHub(repository="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY", reference="$GITHUB_REF_NAME")
+        gh.save("${{ inputs.github_block_name }}", overwrite=True)
+        
+        block = CloudRunJob(
+          image="${{ inputs.image_uri }}",
+          region="${{ inputs.region }}",
+          credentials=GcpCredentials.load("${{ inputs.gcp_credentials_json }}"),
+          cpu=1,
+          timeout=3600,
+        )
+        block.save("${{ inputs.cloudrun_block_name }}", overwrite=True)
+        
+        EOF
+        python blocks.py
       shell: bash

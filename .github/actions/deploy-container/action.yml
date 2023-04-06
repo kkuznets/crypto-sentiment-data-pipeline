@@ -10,9 +10,6 @@ inputs:
   prefect_api_url:
     description: 'Prefect Cloud API URL'
     required: true
-  gcp_credentials_json:
-    description: 'Content of the Service Account JSON key file'
-    required: true
   region:
     description: 'GCP region'
     required: false
@@ -43,7 +40,7 @@ runs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: "${{ inputs.gcp_credentials_json }}"
+        credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -55,7 +52,6 @@ runs:
         prefect_api_url: ${{ inputs.prefect_api_url }}
         artifact_repository: ${{ inputs.artifact_repository }}
         image_name: ${{ inputs.image_name }}
-        gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
         region: ${{ inputs.region }}
 
     - id: terminate-if-exists

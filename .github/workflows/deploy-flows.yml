@@ -8,7 +8,7 @@ on:
       - 'flows/**'
 
 jobs:
-  list-flows:
+  build-flows:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -19,11 +19,11 @@ jobs:
         run: echo "matrix=$(ls flows/*.py | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   deploy:
-    needs: list-flows
+    needs: build-flows
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flows: ${{ fromJson(needs.list-flows.outputs.matrix) }}
+        flows: ${{ fromJson(needs.build-flows.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

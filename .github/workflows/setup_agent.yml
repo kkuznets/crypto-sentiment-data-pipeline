@@ -37,11 +37,6 @@ on:
         required: false
         default: "default-crj"
         type: string
-      gcp_creds_block_name:
-        description: 'Name of the GcpCredentials block'
-        required: false
-        default: "default-gcp"
-        type: string
       deployment:
         description: 'Prefect deployment name'
         required: false
@@ -64,19 +59,17 @@ jobs:
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}  # optional
           region: ${{ github.event.inputs.region }}  # optional
-          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           zone: ${{ github.event.inputs.zone }}  # optional
           machine_type: ${{ github.event.inputs.machine_type }}  # optional
 
       - id: create-blocks
-        uses: ./.github/actions/blocks
+        uses: ./.github/actions/create-blocks
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           image_uri: ${{ env.IMAGE_URI }}
           github_block_name: ${{ github.event.inputs.github_block_name }} # optional
           cloudrun_block_name: ${{ github.event.inputs.cloudrun_block_name }} # optional
-          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           region: ${{ github.event.inputs.region }}  # optional
 
   build-flows:
