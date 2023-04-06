@@ -74,7 +74,7 @@ class BigQueryPandas(Block):
 
 if __name__ == "__main__":
     block = BigQueryPandas(
-        credentials=GcpCredentials.load("default"),
-        project="prefect-community",
+        credentials=GcpCredentials.load("default-gcp"),
+        project="invertible-vine-382705",
     )
     block.save("default", overwrite=True)
