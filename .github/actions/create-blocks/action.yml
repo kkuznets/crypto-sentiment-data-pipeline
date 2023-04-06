@@ -76,10 +76,9 @@ runs:
         )
         block.save("${{ inputs.cloudrun_block_name }}", overwrite=True)
 
-        service_account_info = ${{ inputs.gcp_credentials_json }}
         GcpCredentials(
-            service_account_info=service_account_info
-        ).save("default-gcp")
+            service_account_info = ${{ inputs.gcp_credentials_json }}
+        ).save("default-gcp", overwrite=True)
         
         EOF
         python blocks.py

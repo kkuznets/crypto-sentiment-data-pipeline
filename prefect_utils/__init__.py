@@ -1,1 +1,0 @@
-from prefect_utils.bigquery_pandas import BigQueryPandas
