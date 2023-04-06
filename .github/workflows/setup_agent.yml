@@ -52,6 +52,11 @@ on:
         required: false
         default: default-queue
         type: string
+  push:
+    branches:
+      - main
+    paths:
+      - 'flows/**'
 jobs:
   deploy-container:
     runs-on: ubuntu-latest
