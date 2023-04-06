@@ -16,4 +16,4 @@ ENV PYTHONUNBUFFERED True
 
 COPY flows/ /opt/prefect/flows/
 
-ENTRYPOINT ["prefect", "agent", "start", "-q", "default-queue"]
+ENTRYPOINT ["prefect", "agent", "start", "-q", "default"]

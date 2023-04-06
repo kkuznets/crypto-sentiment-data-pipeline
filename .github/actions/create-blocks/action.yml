@@ -13,11 +13,11 @@ inputs:
   github_block_name:
     description: 'Name of the GitHub block'
     required: false
-    default: "default-gh"
+    default: "default"
   cloudrun_block_name:
     description: 'Name of the CloudRunJob block'
     required: false
-    default: "default-crj"
+    default: "default"
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
@@ -78,7 +78,7 @@ runs:
 
         GcpCredentials(
             service_account_info = ${{ inputs.gcp_credentials_json }}
-        ).save("default-gcp", overwrite=True)
+        ).save("default", overwrite=True)
         
         EOF
         python blocks.py

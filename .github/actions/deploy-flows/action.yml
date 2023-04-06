@@ -16,19 +16,19 @@ inputs:
   deployment:
     description: 'Prefect deployment name - could reference environment or branch name e.g. dev or prod'
     required: false
-    default: "default-deployment"
+    default: "default"
   queue:
     description: 'Prefect queue name'
     required: false
-    default: "default-queue"
+    default: "default"
   github_block_name:
     description: 'Name of the storage block'
     required: false
-    default: "github/default-gh"
+    default: "github/default"
   cloudrun_block_name:
     description: 'Name of the infrastructure block'
     required: false
-    default: "cloud-run-job/default-crj"
+    default: "cloud-run-job/default"
   python_version:
     description: 'Python version'
     required: false

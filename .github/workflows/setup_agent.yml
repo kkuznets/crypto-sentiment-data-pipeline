@@ -30,22 +30,22 @@ on:
       github_block_name:
         description: 'GitHub block name'
         required: false
-        default: "default-gh"
+        default: "default"
         type: string
       cloudrun_block_name:
         description: 'CloudRunJob block name'
         required: false
-        default: "default-crj"
+        default: "default"
         type: string
       deployment:
         description: 'Prefect deployment name'
         required: false
-        default: "default-deployment"
+        default: "default"
         type: string
       queue:
         description: 'Prefect queue name'
         required: false
-        default: "default-queue"
+        default: "default"
         type: string
 jobs:
   deploy-container:
