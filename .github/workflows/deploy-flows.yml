@@ -1,6 +1,11 @@
 name: Prefect Deployments CI/CD
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'flows/**'
 
 jobs:
   list-flows:

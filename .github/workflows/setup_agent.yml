@@ -15,7 +15,7 @@ on:
       artifact_repository:
         description: Artifact Registry Repository
         required: true
-        default: 'binance-txs2'
+        default: 'binance-transactions'
         type: string
       image_name:
         description: Artifact Container Name
@@ -52,11 +52,6 @@ on:
         required: false
         default: "default-queue"
         type: string
-  push:
-    branches:
-      - main
-    paths:
-      - 'flows/**'
 jobs:
   deploy-container:
     runs-on: ubuntu-latest
