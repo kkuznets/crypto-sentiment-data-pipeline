@@ -5,15 +5,15 @@ on:
       github_block_name:
         description: 'Name of the GitHub block'
         required: false
-        default: "default"
+        default: "default-gh"
       cloudrun_block_name:
         description: 'Name of the CloudRunJob block'
         required: false
-        default: "default"
+        default: "default-crj"
       gcp_creds_block_name:
         description: 'Name of the GcpCredentials block'
         required: false
-        default: "default"
+        default: "default-gcp"
       image_uri:
         description: 'Name of the AR image URI'
         required: true
@@ -21,7 +21,7 @@ on:
       region:
         description: GCP region
         required: true
-        default: 'us-east1'
+        default: 'us-central1'
       python_version:
         description: 'Python version'
         required: false

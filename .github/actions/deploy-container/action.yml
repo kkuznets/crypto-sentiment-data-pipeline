@@ -53,10 +53,10 @@ runs:
       with:
         prefect_api_key: ${{ inputs.prefect_api_key }}
         prefect_api_url: ${{ inputs.prefect_api_url }}
-        gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
-        region: ${{ inputs.region }}
         artifact_repository: ${{ inputs.artifact_repository }}
         image_name: ${{ inputs.image_name }}
+        gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
+        region: ${{ inputs.region }}
 
     - id: terminate-if-exists
       run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
