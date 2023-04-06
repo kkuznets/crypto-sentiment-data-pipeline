@@ -16,4 +16,4 @@ ENV PYTHONUNBUFFERED True
 
 COPY flows/ /opt/prefect/flows/
 
-ENTRYPOINT ["sh", "-c", "prefect agent start -p 'default-agent-pool"]
+ENTRYPOINT ["prefect", "agent", "start", "--pool", "default-agent-pool", "--work-queue", "default"]
