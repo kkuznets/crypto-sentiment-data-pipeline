@@ -16,11 +16,11 @@ inputs:
   deployment:
     description: 'Prefect deployment name - could reference environment or branch name e.g. dev or prod'
     required: false
-    default: default-deployment
+    default: "default-deployment"
   queue:
     description: 'Prefect queue name'
     required: false
-    default: default-queue
+    default: "default-queue"
   storage_block:
     description: 'Name of the storage block'
     required: false

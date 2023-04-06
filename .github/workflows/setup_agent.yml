@@ -15,7 +15,7 @@ on:
       artifact_repository:
         description: Artifact Registry Repository
         required: true
-        default: 'binance-transactions1'
+        default: "binance-transactions"
         type: string
       image_name:
         description: Artifact Container Name
@@ -45,12 +45,12 @@ on:
       deployment:
         description: 'Prefect deployment name'
         required: false
-        default: default-deployment
+        default: "default-deployment"
         type: string
       queue:
         description: 'Prefect queue name'
         required: false
-        default: default-queue
+        default: "default-queue"
         type: string
   push:
     branches:
