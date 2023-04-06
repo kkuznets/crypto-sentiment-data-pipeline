@@ -37,6 +37,9 @@ inputs:
     description: 'Can be set to e.g. pip install -r requirements.txt'
     required: false
     default: "pip install ."  # install via setup.py by default
+  gcp_credentials_json:
+    description: 'Content of the Service Account JSON key file'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -57,6 +60,11 @@ runs:
         prefect config set PREFECT_API_KEY=${{ inputs.prefect_api_key }}
         prefect config set PREFECT_API_URL=${{ inputs.prefect_api_url }}
       shell: bash
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: "${{ inputs.gcp_credentials_json }}"
 
     - run: |
         prefect deployment build ${{ inputs.flow_entrypoint }} -n ${{ inputs.deployment }} -q ${{ inputs.queue }} \

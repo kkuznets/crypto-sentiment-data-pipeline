@@ -106,3 +106,4 @@ jobs:
           queue: ${{ github.event.inputs.queue }} # optional
           github_block_name: github/${{ github.event.inputs.github_block_name }} # optional
           cloudrun_block_name: cloud-run-job/${{ github.event.inputs.cloudrun_block_name }} # optional
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
