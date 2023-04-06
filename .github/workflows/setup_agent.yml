@@ -27,17 +27,17 @@ on:
         required: true
         default: 'e2-micro'
         type: string
-      storage_block:
+      github_block_name:
         description: 'GitHub block name'
         required: false
         default: "default-gh"
         type: string
-      infrastructure_block:
+      cloudrun_block_name:
         description: 'CloudRunJob block name'
         required: false
         default: "default-crj"
         type: string
-      gcp_creds_block:
+      gcp_creds_block_name:
         description: 'Name of the GcpCredentials block'
         required: false
         default: "default-gcp"
@@ -69,13 +69,14 @@ jobs:
           machine_type: ${{ github.event.inputs.machine_type }}  # optional
 
       - id: create-blocks
-        uses: ./.github/actions/create-blocks
+        uses: ./.github/actions/blocks
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           image_uri: ${{ env.IMAGE_URI }}
-          storage_block: ${{ github.event.inputs.storage_block }} # optional
-          infrastructure_block: ${{ github.event.inputs.infrastructure_block }} # optional
+          github_block_name: ${{ github.event.inputs.github_block_name }} # optional
+          cloudrun_block_name: ${{ github.event.inputs.cloudrun_block_name }} # optional
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           region: ${{ github.event.inputs.region }}  # optional
 
   build-flows:
@@ -108,5 +109,5 @@ jobs:
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
           deployment: ${{ github.event.inputs.deployment }} # optional
           queue: ${{ github.event.inputs.queue }} # optional
-          storage_block: github/${{ github.event.inputs.storage_block }} # optional
-          infrastructure_block: cloud-run-job/${{ github.event.inputs.infrastructure_block }} # optional
+          github_block_name: github/${{ github.event.inputs.github_block_name }} # optional
+          cloudrun_block_name: cloud-run-job/${{ github.event.inputs.cloudrun_block_name }} # optional

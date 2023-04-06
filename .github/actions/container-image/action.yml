@@ -20,7 +20,7 @@ inputs:
   artifact_repository:
     description: 'Artifact Registry Repository Name'
     required: false
-    default: 'binance'
+    default: 'binance-transactions'
   image_name:
     description: 'Artifact Registry Image Name'
     required: false
