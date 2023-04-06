@@ -7,7 +7,6 @@ def hello(user_input: str = "World"):
 
     logger = get_run_logger()
     
-
     logger.info("Hello from Prefect, %s! 🚀", user_input)
     
 
