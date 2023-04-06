@@ -70,7 +70,7 @@ runs:
         block = CloudRunJob(
           image="${{ inputs.image_uri }}",
           region="${{ inputs.region }}",
-          credentials=GcpCredentials.load("${{ inputs.gcp_credentials_json }}"),
+          credentials="${{ inputs.gcp_credentials_json }}",
           cpu=1,
           timeout=3600,
         )
