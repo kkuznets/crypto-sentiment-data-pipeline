@@ -1,9 +1,10 @@
+import prefect
 from prefect import flow, get_run_logger
 from platform import node, platform
 
 
 @flow
-def hello(user_input: str = "World"):
+def main(user_input: str = "World"):
 
     logger = get_run_logger()
     
@@ -14,4 +15,4 @@ def hello(user_input: str = "World"):
 
 
 if __name__ == "__main__":
-    hello()
+    main()

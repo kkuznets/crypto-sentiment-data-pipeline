@@ -2,8 +2,8 @@
 # This will also set default project and region:
 export CLOUDSDK_CORE_PROJECT="invertible-vine-382705"
 export CLOUDSDK_COMPUTE_REGION=us-central1
-export GCP_SA_NAME=binance-transactions1
-export GCP_AR_REPO=binance-transactions1
+export GCP_SA_NAME=binance-transactions
+export GCP_AR_REPO=binance-transactions
 
 # enable required GCP services:
 gcloud services enable iamcredentials.googleapis.com

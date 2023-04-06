@@ -71,7 +71,7 @@ runs:
           image="${{ inputs.image_uri }}",
           region="${{ inputs.region }}",
           credentials=${{ inputs.gcp_credentials_json }},
-          cpu=1,
+          cpu=2,
           timeout=3600,
         )
         block.save("${{ inputs.cloudrun_block_name }}", overwrite=True)
