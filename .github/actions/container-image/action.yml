@@ -26,13 +26,16 @@ inputs:
     description: 'Path and filename of the Dockerfile'
     required: false
     default: Dockerfile
+  gcp_credentials_json:
+    description: 'Content of the Service Account JSON key file'
+    required: true
 runs:
   using: "composite"
   steps:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+        credentials_json: "${{ inputs.gcp_credentials_json }}"
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -54,7 +57,7 @@ runs:
       with:
         registry: '${{ inputs.region }}-docker.pkg.dev'
         username: _json_key
-        password: ${{ secrets.GCP_CREDENTIALS }}
+        password: ${{ inputs.gcp_credentials_json }}
 
     - id: build-image
       run: |

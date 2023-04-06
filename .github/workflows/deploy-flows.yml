@@ -43,3 +43,4 @@ jobs:
           cloudrun_block_name: "cloud-run-job/default-crj" # optional
           python_version: "3.10" # optional
           install_command: "pip install ." # optional
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}

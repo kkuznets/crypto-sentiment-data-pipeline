@@ -61,6 +61,7 @@ jobs:
           region: ${{ github.event.inputs.region }}  # optional
           zone: ${{ github.event.inputs.zone }}  # optional
           machine_type: ${{ github.event.inputs.machine_type }}  # optional
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
       - id: create-blocks
         uses: ./.github/actions/create-blocks
@@ -71,6 +72,7 @@ jobs:
           github_block_name: ${{ github.event.inputs.github_block_name }} # optional
           cloudrun_block_name: ${{ github.event.inputs.cloudrun_block_name }} # optional
           region: ${{ github.event.inputs.region }}  # optional
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
   build-flows:
     runs-on: ubuntu-latest
@@ -104,3 +106,4 @@ jobs:
           queue: ${{ github.event.inputs.queue }} # optional
           github_block_name: github/${{ github.event.inputs.github_block_name }} # optional
           cloudrun_block_name: cloud-run-job/${{ github.event.inputs.cloudrun_block_name }} # optional
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
