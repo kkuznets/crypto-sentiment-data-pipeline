@@ -15,7 +15,7 @@ on:
       artifact_repository:
         description: Artifact Registry Repository
         required: true
-        default: "binance"
+        default: 'binance'
         type: string
       image_name:
         description: Artifact Container Name
