@@ -30,6 +30,14 @@ inputs:
     description: GCP region
     required: true
     default: 'us-central1'
+  artifact_repository:
+    description: 'Artifact Registry Repository Name'
+    required: false
+    default: 'binance-transactions'
+  image_name:
+    description: 'Artifact Registry Image Name'
+    required: false
+    default: deployments
   python_version:
     description: 'Python version'
     required: false
@@ -58,6 +66,14 @@ runs:
         prefect config set PREFECT_API_KEY=${{ inputs.prefect_api_key }}
         prefect config set PREFECT_API_URL=${{ inputs.prefect_api_url }}
       shell: bash
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: "${{ inputs.gcp_credentials_json }}"
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
 
     - id: set-image
       run: |
