@@ -17,11 +17,6 @@ on:
         required: true
         default: 'binance-transactions'
         type: string
-      image_name:
-        description: Artifact Container Name
-        required: true
-        default: 'deployments'
-        type: string
       machine_type:
         description: GCP Compute Engine instance type
         required: true
@@ -56,10 +51,6 @@ on:
         required: false
         default: "default"
         type: string
-      dockerfile_path:
-        description: 'Path and filename of the Dockerfile'
-        required: false
-        default: Dockerfile
 jobs:
   deploy-agent:
     runs-on: ubuntu-latest
@@ -73,9 +64,9 @@ jobs:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          image_name: ${{ github.event.inputs.image_name }}
+          image_name: 'deployments'
           region: ${{ github.event.inputs.region }}
-          dockerfile_path: ${{ github.event.inputs.dockerfile_path }}
+          dockerfile_path: Dockerfile
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - id: deploy-vm
         name: Deploy Prefect agent
@@ -107,7 +98,7 @@ jobs:
           region: ${{ github.event.inputs.region }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          image_name: ${{ github.event.inputs.image_name }}
+          image_name: 'deployments'
           python_version: "3.10"
           install_command: "pip install ."
 
