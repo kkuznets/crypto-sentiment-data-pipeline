@@ -1,4 +1,4 @@
-name: Prefect Deployments CI/CD
+name: Deploy Flows
 on:
   workflow_dispatch:
   push:
