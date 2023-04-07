@@ -27,6 +27,11 @@ on:
         required: true
         default: 'e2-micro'
         type: string
+      gcp_creds_block_name:
+        description: 'GCP Credentials block name'
+        required: false
+        default: "default"
+        type: string
       github_block_name:
         description: 'GitHub block name'
         required: false
@@ -69,6 +74,7 @@ jobs:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           image_uri: ${{ env.IMAGE_URI }}
+          gcp_creds_block_name: ${{ github.event.inputs.gcp_creds_block_name }} # optional
           github_block_name: ${{ github.event.inputs.github_block_name }} # optional
           cloudrun_block_name: ${{ github.event.inputs.cloudrun_block_name }} # optional
           region: ${{ github.event.inputs.region }}  # optional

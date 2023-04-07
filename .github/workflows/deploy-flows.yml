@@ -39,6 +39,7 @@ jobs:
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
           deployment: "default" # optional
           queue: "default" # optional
+          gcp_creds_block_name: "gcp-credentials/default" # optional
           github_block_name: "github/default" # optional
           cloudrun_block_name: "cloud-run-job/default" # optional
           python_version: "3.10" # optional
