@@ -26,9 +26,6 @@ inputs:
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
-  image_uri:
-    description: 'Name of the AR image URI'
-    required: true
   region:
     description: GCP region
     required: true
@@ -62,6 +59,13 @@ runs:
         prefect config set PREFECT_API_URL=${{ inputs.prefect_api_url }}
       shell: bash
 
+    - id: set-image
+      run: |
+        echo "RAW_IMAGE=${{ inputs.region }}-docker.pkg.dev/$GCP_PROJECT/${{ inputs.artifact_repository }}/${{ inputs.image_name }}" >> $GITHUB_ENV
+        echo "IMAGE_URI=${{ inputs.region }}-docker.pkg.dev/$GCP_PROJECT/${{ inputs.artifact_repository }}/${{ inputs.image_name }}:$GITHUB_SHA" >> $GITHUB_ENV
+        echo "uri=$(echo $IMAGE_URI)" >> $GITHUB_OUTPUT
+      shell: bash
+
     - id: create-blocks
       run: |
         cat <<EOF > blocks.py
@@ -80,7 +84,7 @@ runs:
         gcp_credentials = GcpCredentials.load("${{ inputs.gcp_creds_block_name }}")
         
         block = CloudRunJob(
-          image="${{ inputs.image_uri }}",
+          image="${{ env.IMAGE_URI }}",
           region="${{ inputs.region }}",
           credentials=gcp_credentials,
           cpu=2,

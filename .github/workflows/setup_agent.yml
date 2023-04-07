@@ -99,7 +99,6 @@ jobs:
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
-          image_uri: ${{ env.IMAGE_URI }}
           gcp_creds_block_name: ${{ github.event.inputs.gcp_creds_block_name }}
           github_block_name: ${{ github.event.inputs.github_block_name }}
           cloudrun_block_name: ${{ github.event.inputs.cloudrun_block_name }}
