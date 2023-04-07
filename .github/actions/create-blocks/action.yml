@@ -11,10 +11,10 @@ inputs:
     description: 'Prefect Cloud API URL'
     required: true
   gcp_creds_block_name:
-        description: 'GCP Credentials block name'
-        required: false
-        default: "default"
-        type: string
+    description: 'Name of the GCP Credentials block'
+    required: false
+    default: "default"
+    type: string
   github_block_name:
     description: 'Name of the GitHub block'
     required: false

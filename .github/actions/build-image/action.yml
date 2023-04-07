@@ -10,10 +10,6 @@ inputs:
   prefect_api_url:
     description: 'Prefect Cloud API URL'
     required: true
-  region:
-    description: 'GCP region'
-    required: false
-    default: 'us-central1'
   artifact_repository:
     description: 'Artifact Registry Repository Name'
     required: false
@@ -22,6 +18,10 @@ inputs:
     description: 'Artifact Registry Image Name'
     required: false
     default: deployments
+  region:
+    description: 'GCP region'
+    required: false
+    default: 'us-central1'
   dockerfile_path:
     description: 'Path and filename of the Dockerfile'
     required: false

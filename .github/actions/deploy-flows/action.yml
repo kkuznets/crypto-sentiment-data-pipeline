@@ -32,11 +32,11 @@ inputs:
   python_version:
     description: 'Python version'
     required: false
-    default: "3.10"  # the latest Prefect 2 version is used by default
+    default: "3.10"
   install_command:
     description: 'Can be set to e.g. pip install -r requirements.txt'
     required: false
-    default: "pip install ."  # install via setup.py by default
+    default: "pip install ."
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
