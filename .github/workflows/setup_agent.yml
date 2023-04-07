@@ -59,6 +59,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: build-image
+        name: Build agent docker image
         uses: ./.github/actions/build-image
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
@@ -75,6 +76,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: deploy-vm
+        name: Deploy agent VM
         uses: ./.github/actions/deploy-vm
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
@@ -92,6 +94,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: create-blocks
+        name: Create Prefect blocks
         uses: ./.github/actions/create-blocks
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
@@ -112,6 +115,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: set-matrix
+        name: Collect Prefect flows
         run: echo "matrix=$(ls flows/*.py | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   deploy-flows:
@@ -124,10 +128,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: flow
+        name: List Prefect flows
         run: |
           export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
           echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
       - id: deploy
+        name: Deploy Prefect flows
         uses: ./.github/actions/deploy-flows
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
