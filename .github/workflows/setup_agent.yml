@@ -56,16 +56,16 @@ jobs:
   build-image:
     runs:
       using: "composite"
-    steps:
-      - id: build-image
-      uses: ./.github/actions/build-image
-      with:
-        prefect_api_key: ${{ inputs.prefect_api_key }}
-        prefect_api_url: ${{ inputs.prefect_api_url }}
-        artifact_repository: ${{ inputs.artifact_repository }}
-        image_name: ${{ inputs.image_name }}
-        region: ${{ inputs.region }}
-        gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
+      steps:
+        - id: build-image
+        uses: ./.github/actions/build-image
+        with:
+          prefect_api_key: ${{ inputs.prefect_api_key }}
+          prefect_api_url: ${{ inputs.prefect_api_url }}
+          artifact_repository: ${{ inputs.artifact_repository }}
+          image_name: ${{ inputs.image_name }}
+          region: ${{ inputs.region }}
+          gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
 
   deploy-vm:
     runs-on: ubuntu-latest
