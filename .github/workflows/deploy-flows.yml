@@ -41,10 +41,10 @@ jobs:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
-          deployment: ${{ github.event.inputs.deployment }} ||
-          queue: ${{ github.event.inputs.queue }}
-          github_block_name: github/${{ github.event.inputs.github_block_name }}
-          cloudrun_block_name: cloud-run-job/${{ github.event.inputs.cloudrun_block_name }}
+          deployment: "default"
+          queue: "default"
+          github_block_name: github/default
+          cloudrun_block_name: cloud-run-job/default
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          python_version: github/${{ github.event.inputs.python_version }}
-          install_command: github/${{ github.event.inputs.install_command }}
+          python_version: "3.10"
+          install_command: "pip install ."
