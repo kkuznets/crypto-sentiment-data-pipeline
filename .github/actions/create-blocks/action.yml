@@ -66,19 +66,22 @@ runs:
         
         gh = GitHub(repository="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY", reference="$GITHUB_REF_NAME")
         gh.save("${{ inputs.github_block_name }}", overwrite=True)
+
+        service_account_info = ${{ inputs.gcp_credentials_json }}
+        GcpCredentials(
+            service_account_info = service_account_info
+        ).save("default", overwrite=True)
+
+        gcp_credentials = GcpCredentials.load('default')
         
         block = CloudRunJob(
           image="${{ inputs.image_uri }}",
           region="${{ inputs.region }}",
-          credentials="${{ inputs.gcp_credentials_json }}",
+          credentials=gcp_credentials,
           cpu=2,
           timeout=3600,
         )
         block.save("${{ inputs.cloudrun_block_name }}", overwrite=True)
-
-        GcpCredentials(
-            service_account_info = "${{ inputs.gcp_credentials_json }}"
-        ).save("default", overwrite=True)
         
         EOF
         python blocks.py
