@@ -54,7 +54,7 @@ on:
         type: string
 jobs:
   build-image:
-    runs: composite
+    runs-on: composite
       steps:
         - id: build-image
         uses: ./.github/actions/build-image
