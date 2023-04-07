@@ -85,6 +85,7 @@ jobs:
   build-blocks:
     runs-on: ubuntu-latest
     needs: deploy-vm
+    steps:
       - id: create-blocks
         uses: ./.github/actions/create-blocks
         with:
@@ -99,7 +100,7 @@ jobs:
 
   build-flows:
     runs-on: ubuntu-latest
-    needs: deploy-vm
+    needs: build-blocks
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
