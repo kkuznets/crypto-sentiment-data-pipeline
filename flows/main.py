@@ -1,4 +1,3 @@
-import prefect
 from prefect import flow, get_run_logger
 from platform import node, platform
 
@@ -8,7 +7,7 @@ def main(user_input: str = "World"):
 
     logger = get_run_logger()
     
-    
+
     logger.info("Hello from Prefect, %s! 🚀", user_input)
     
 
