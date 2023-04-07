@@ -48,16 +48,6 @@ runs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    - id: image
-      uses: ./.github/actions/container-image
-      with:
-        prefect_api_key: ${{ inputs.prefect_api_key }}
-        prefect_api_url: ${{ inputs.prefect_api_url }}
-        artifact_repository: ${{ inputs.artifact_repository }}
-        image_name: ${{ inputs.image_name }}
-        region: ${{ inputs.region }}
-        gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
-
     - id: terminate-if-exists
       run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
       continue-on-error: true
