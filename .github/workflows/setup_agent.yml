@@ -55,9 +55,9 @@ on:
 jobs:
   build-image:
     runs-on: composite
-      steps:
-        - id: build-image
-        uses: ./.github/actions/build-image
+    steps:
+      - id: build-image
+      - uses: ./.github/actions/build-image
         with:
           prefect_api_key: ${{ inputs.prefect_api_key }}
           prefect_api_url: ${{ inputs.prefect_api_url }}
