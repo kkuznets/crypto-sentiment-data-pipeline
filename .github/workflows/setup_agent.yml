@@ -62,12 +62,12 @@ jobs:
       - id: build-image
         uses: ./.github/actions/build-image
         with:
-          prefect_api_key: ${{ inputs.prefect_api_key }}
-          prefect_api_url: ${{ inputs.prefect_api_url }}
-          artifact_repository: ${{ inputs.artifact_repository }}
-          image_name: ${{ inputs.image_name }}
-          region: ${{ inputs.region }}
-          gcp_credentials_json: ${{ inputs.gcp_credentials_json }}
+          prefect_api_key: ${{ secrets.prefect_api_key }}
+          prefect_api_url: ${{ secrets.prefect_api_url }}
+          artifact_repository: ${{ github.event.inputs.artifact_repository }}
+          image_name: ${{ github.event.inputs.image_name }}
+          region: ${{ github.event.inputs.region }}
+          gcp_credentials_json: ${{ secrets.gcp_credentials_json }}
 
   deploy-vm:
     runs-on: ubuntu-latest
