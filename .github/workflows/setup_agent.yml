@@ -55,7 +55,7 @@ on:
 jobs:
 
   build-image:
-    runs-on: composite
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
