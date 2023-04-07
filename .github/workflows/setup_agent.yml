@@ -60,14 +60,6 @@ on:
         description: 'Path and filename of the Dockerfile'
         required: false
         default: Dockerfile
-      python_version:
-        description: 'Python version'
-        required: false
-        default: "3.10"
-      install_command:
-        description: 'Command to install libraries'
-        required: false
-        default: "pip install ."  # install via setup.py by default
 jobs:
   deploy-agent:
     runs-on: ubuntu-latest
@@ -116,8 +108,8 @@ jobs:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
           image_name: ${{ github.event.inputs.image_name }}
-          python_version: ${{ github.event.inputs.install_command }}
-          install_command: ${{ github.event.inputs.install_command }}
+          python_version: "3.10"
+          install_command: "pip install ."
 
   get-flows:
     runs-on: ubuntu-latest
@@ -157,5 +149,5 @@ jobs:
           github_block_name: github/${{ github.event.inputs.github_block_name }}
           cloudrun_block_name: cloud-run-job/${{ github.event.inputs.cloudrun_block_name }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          python_version: ${{ github.event.inputs.install_command }}
-          install_command: ${{ github.event.inputs.install_command }}
+          python_version: "3.10"
+          install_command: "pip install ."
