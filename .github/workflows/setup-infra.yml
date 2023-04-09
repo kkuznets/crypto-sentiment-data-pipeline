@@ -1,4 +1,4 @@
-name: "Initial Setup"
+name: "ZSetup infra"
 on:
   workflow_dispatch:
 jobs:

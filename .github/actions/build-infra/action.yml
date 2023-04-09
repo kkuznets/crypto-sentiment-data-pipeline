@@ -25,13 +25,13 @@ runs:
     - name: Terraform Init
       run: terraform init
 
-    - name: Terraform Apply
-        id: apply
-        run: |
-          terraform apply -auto-approve \
-            -var project_id=$GCP_PROJECT \
-            -var bucket_name=my-gcs-bucket \
-            -var location=US
+    - id: apply
+    run: |
+      terraform apply -auto-approve \
+        -var project_id=$GCP_PROJECT \
+        -var bucket_name=my-gcs-bucket \
+        -var location=US
+    shell: bash
 
-      - name: Get bucket URL
-        run: echo "Bucket URL: $(terraform output bucket_url)"
+    - name: Get bucket URL
+      run: echo "Bucket URL: $(terraform output bucket_url)"
