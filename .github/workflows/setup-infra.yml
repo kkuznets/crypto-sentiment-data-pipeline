@@ -1,0 +1,19 @@
+name: "Initial Setup"
+on:
+  workflow_dispatch:
+jobs:
+  
+  setup_gcs_bucket:
+    name: Setup GCS bucket using Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - id: infra
+        name: Setup infra
+        uses: ./.github/actions/build-infra
+        with:
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+
+      
