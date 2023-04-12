@@ -10,7 +10,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "data-lake-bucket" {
-  name          = "lalala" # Concatenating DL bucket & Project name for unique naming
+  name          = "be-kkuznets-vulnerable-vine-lalala" # Concatenating DL bucket & Project name for unique naming
   location      = "EU"
 
   # Optional, but recommended settings:
