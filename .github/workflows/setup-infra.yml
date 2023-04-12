@@ -22,9 +22,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - id: setup-infra
+      - id: infra
         name: Setup infra
-        uses: ./.github/actions/build-infra
+        uses: ./.github/actions/setup-infra
         with:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           region: ${{ github.event.inputs.region }}
