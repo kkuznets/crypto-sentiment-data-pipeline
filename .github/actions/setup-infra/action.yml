@@ -40,5 +40,5 @@ runs:
       shell: bash
 
     - name: Terraform Apply
-      run: terraform -chdir="./terraform" apply
+      run: terraform -chdir="./terraform" apply -auto-approve
       shell: bash
