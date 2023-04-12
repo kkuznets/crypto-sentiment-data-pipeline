@@ -36,5 +36,5 @@ runs:
       shell: bash
 
     - name: Terraform Plan
-      run: terraform -chdir="./terraform" plan -var="project=$GCP_PROJECT" -var="region=${{ inputs.region }}" -var="zone=${{ inputs.zone }}"
+      run: terraform -chdir="./terraform" plan
       shell: bash
