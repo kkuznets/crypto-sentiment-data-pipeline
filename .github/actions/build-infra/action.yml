@@ -22,5 +22,5 @@ runs:
     - uses: hashicorp/setup-terraform@v2
 
     - name: Terraform Init
-      run: terraform init
+      run: terraform -chdir="./terraform" init
       shell: bash
