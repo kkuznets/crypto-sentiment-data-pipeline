@@ -7,6 +7,16 @@ inputs:
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
+  region:
+    description: GCP region
+    required: true
+    default: 'us-central1'
+    type: string
+  zone:
+    description: Zone in the selected GCP region
+    required: true
+    default: 'us-central1-a'
+    type: string
 
 runs:
   using: "composite"
@@ -23,4 +33,8 @@ runs:
 
     - name: Terraform Init
       run: terraform -chdir="./terraform" init
+      shell: bash
+
+    - name: Terraform Plan
+      run: terraform -chdir="./terraform" plan -var="credentials=file(${{ inputs.gcp_credentials_json }})" -var="project=$GCP_PROJECT" -var="region=${{ inputs.region }}" -var="zone=${{ inputs.zone }}"
       shell: bash
