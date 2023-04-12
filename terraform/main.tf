@@ -7,5 +7,8 @@ terraform {
 }
 
 provider "google" {
+    credentials = ""
+    region = ""
+    zone = ""
 }
 
