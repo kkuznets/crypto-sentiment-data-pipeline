@@ -35,6 +35,10 @@ runs:
       run: terraform -chdir="./terraform" init
       shell: bash
 
-    - name: Terraform Plan
-      run: terraform -chdir="./terraform" plan
+    - name: Terraform Format
+      run: terraform -chdir="./terraform" fmt
+      shell: bash
+
+    - name: Terraform Apply
+      run: terraform -chdir="./terraform" apply
       shell: bash
