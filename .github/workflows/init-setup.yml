@@ -52,7 +52,7 @@ on:
         default: "default"
         type: string
 jobs:
-  setup_infra:
+  setup-infra:
     name: Setup GCP infrastructure
     runs-on: ubuntu-latest
     steps:
