@@ -41,6 +41,10 @@ runs:
       run: terraform -chdir="./terraform" fmt
       shell: bash
 
+    - name: Terraform Validate
+      run: terraform -chdir="./terraform" validate
+      shell: bash
+
     - name: Terraform Apply
       run: |
         terraform -chdir="./terraform" apply \
