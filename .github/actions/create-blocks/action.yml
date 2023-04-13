@@ -127,8 +127,6 @@ runs:
         infra_block.save("${{ inputs.cloudrun_block_name }}", overwrite=True)
 
         bucket_name = "$GCP_PROJECT-${{ inputs.bucket_suffix }}"
-        cloud_storage_client = gcp_credentials.get_cloud_storage_client()
-        cloud_storage_client.create_bucket(bucket_name)
         gcs_bucket = GcsBucket(
             bucket=bucket_name,
             gcp_credentials=gcp_credentials,
