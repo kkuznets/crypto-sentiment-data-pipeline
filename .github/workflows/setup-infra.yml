@@ -2,15 +2,20 @@ name: "Setup Infrastructure"
 on:
   workflow_dispatch:
     inputs:
-      region:
-        description: GCP region
+      gcs_location:
+        description: Location of the GCS bucket
         required: true
-        default: 'us-central1'
+        default: "US"
         type: string
-      zone:
-        description: Zone in the selected GCP region
+      bucket_suffix:
+        description: Postfix for GCS bucket name
         required: true
-        default: 'us-central1-a'
+        default: "raw_crypto_data"
+        type: string
+      dataset_name:
+        description: BigQuery dataset name
+        required: true
+        default: "crypto_data"
         type: string
 jobs:
   setup_gcp:
