@@ -2,21 +2,23 @@ name: 'Setup Infra'
 branding:
   icon: cloud
   color: yellow
-description: 'Package your dependencies into a Docker image and push it to Google Artifact Registry'
+description: 'Setup GCP services'
 inputs:
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
-  region:
-    description: GCP region
-    required: true
-    default: 'us-central1'
-    type: string
-  zone:
-    description: Zone in the selected GCP region
-    required: true
-    default: 'us-central1-a'
-    type: string
+  gcs_location:
+    description: 'GCS location'
+    required: false
+    default: 'US'
+  bucket_suffix:
+    description: 'GCS bucket suffix'
+    required: false
+    default: 'raw-crypto-data'
+  dataset_name:
+    description: 'BigQuery dataset name'
+    required: false
+    default: 'crypto-data'
 
 runs:
   using: "composite"
@@ -40,5 +42,10 @@ runs:
       shell: bash
 
     - name: Terraform Apply
-      run: terraform -chdir="./terraform" apply -auto-approve -var="bucket_name=$GCP_PROJECT-raw-data"
+      run: |
+        terraform -chdir="./terraform" apply
+        -auto-approve
+        -var="bucket_name=$GCP_PROJECT-${{ inputs.bucket_suffix }}"
+        -var="dataset_name=${{ inputs.dataset_name }}"
+        -var="location=${{ inputs.gcs_location }}"
       shell: bash

@@ -9,3 +9,9 @@ variable "dataset_name" {
     description = "Name of the dataset to create"
     default     = "crypto-market-data"
 }
+
+variable "location" {
+    type        = string
+    description = "Location of the bucket and dataset"
+    default     = "US"
+}

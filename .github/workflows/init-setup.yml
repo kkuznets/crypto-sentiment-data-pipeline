@@ -15,43 +15,58 @@ on:
       artifact_repository:
         description: Artifact Registry Repository
         required: true
-        default: "prefect-agent-image"
-        type: string
-      machine_type:
-        description: GCP Compute Engine instance type
-        required: true
-        default: "e2-micro"
+        default: "prefect-images"
         type: string
       machine_name:
-        description: "GCP Compute Engine instance name"
-        required: false
+        description: Prefect Agent VM name
+        required: true
         default: "prefect-agent"
-      gcp_creds_block_name:
-        description: "GCP Credentials block name"
-        required: false
-        default: "default"
+      gcs_location:
+        description: Location of the GCS bucket
+        required: true
+        default: "US"
         type: string
-      github_block_name:
-        description: "GitHub block name"
-        required: false
-        default: "default"
+      bucket_suffix:
+        description: Postfix for GCS bucket name
+        required: true
+        default: "raw_crypto_data"
         type: string
-      cloudrun_block_name:
-        description: "CloudRunJob block name"
-        required: false
+      dataset_name:
+        description: BigQuery dataset name
+        required: true
+        default: "crypto_data"
+        type: string
+      prefect_block_name:
+        description: Standard Prefect blocks name
+        required: true
         default: "default"
         type: string
       deployment:
-        description: "Prefect deployment name"
-        required: false
+        description: Prefect deployment name
+        required: true
         default: "default"
         type: string
       queue:
-        description: "Prefect queue name"
-        required: false
+        description: Prefect queue name
+        required: true
         default: "default"
         type: string
 jobs:
+  setup_gcp:
+    name: Setup GCP services
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - id: infra
+        name: Setup infra
+        uses: ./.github/actions/setup-infra
+        with:
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          gcs_location: ${{ github.event.inputs.gcs_location }}
+          bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
+          
   deploy-agent:
     runs-on: ubuntu-latest
     steps:
@@ -76,7 +91,6 @@ jobs:
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           region: ${{ github.event.inputs.region }}
           zone: ${{ github.event.inputs.zone }}
-          machine_type: ${{ github.event.inputs.machine_type }}
           machine_name: ${{ github.event.inputs.machine_name }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
@@ -92,9 +106,9 @@ jobs:
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
-          gcp_creds_block_name: ${{ github.event.inputs.gcp_creds_block_name }}
-          github_block_name: ${{ github.event.inputs.github_block_name }}
-          cloudrun_block_name: ${{ github.event.inputs.cloudrun_block_name }}
+          gcp_creds_block_name: ${{ github.event.inputs.prefect_block_name }}
+          github_block_name: ${{ github.event.inputs.prefect_block_name }}
+          cloudrun_block_name: ${{ github.event.inputs.prefect_block_name }}
           region: ${{ github.event.inputs.region }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
@@ -137,22 +151,9 @@ jobs:
           flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
           deployment: ${{ github.event.inputs.deployment }}
           queue: ${{ github.event.inputs.queue }}
-          github_block_name: github/${{ github.event.inputs.github_block_name }}
-          cloudrun_block_name: cloud-run-job/${{ github.event.inputs.cloudrun_block_name }}
+          github_block_name: github/${{ github.event.inputs.prefect_block_name }}
+          cloudrun_block_name: cloud-run-job/${{ github.event.inputs.prefect_block_name }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           python_version: "3.10"
           install_command: "pip install ."
-
-  setup_gcp:
-    name: Setup GCP services
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - id: infra
-        name: Setup infrastructure
-        uses: ./.github/actions/setup-infra
-      - id: superset
-        name: Setup Superset
-        uses: ./.github/actions/setup-superset
 

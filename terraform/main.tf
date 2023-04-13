@@ -11,7 +11,7 @@ provider "google" {
 
 resource "google_storage_bucket" "data-lake-bucket" {
   name                        = var.bucket_name
-  location                    = "US"
+  location                    = var.location
   uniform_bucket_level_access = true
   force_destroy               = true
   versioning {
@@ -20,9 +20,9 @@ resource "google_storage_bucket" "data-lake-bucket" {
 }
 
 resource "google_bigquery_dataset" "dataset" {
-  dataset_id                 = "crypto-market-data"
+  dataset_id                 = var.dataset_name
+  location                   = var.location
   friendly_name              = "Crypto Market Data"
   description                = "Dataset for crypto market analysis"
-  location                   = "US"
   delete_contents_on_destroy = true
 }
