@@ -14,7 +14,7 @@ inputs:
   bucket_suffix:
     description: 'GCS bucket suffix'
     required: false
-    default: 'raw_crypto_data'
+    default: 'raw-crypto-data'
   dataset_name:
     description: 'BigQuery dataset name'
     required: false

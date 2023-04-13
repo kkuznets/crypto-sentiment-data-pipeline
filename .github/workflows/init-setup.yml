@@ -29,7 +29,7 @@ on:
       bucket_suffix:
         description: Postfix for GCS bucket name
         required: true
-        default: "raw_crypto_data"
+        default: "raw-crypto-data"
         type: string
       dataset_name:
         description: BigQuery dataset name
