@@ -22,6 +22,8 @@ jobs:
       - id: infra
         name: Setup infra
         uses: ./.github/actions/setup-infra
+        with:
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
 
 
       
