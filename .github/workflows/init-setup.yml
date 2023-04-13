@@ -59,7 +59,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: gcs_bq
-        name: Setup GCS Bucket and Bigquery Dataset
+        name: Setup GCS bucket and Bigquery dataset
         uses: ./.github/actions/setup-infra
         with:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
@@ -90,7 +90,7 @@ jobs:
 
   create-blocks:
     runs-on: ubuntu-latest
-    needs: deploy-agent
+    needs: setup-infra
     steps:
       - name: Checkout
         uses: actions/checkout@v3
