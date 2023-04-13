@@ -10,7 +10,7 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "data-lake-bucket" {
-  name                        = "raw-crypto-market-data"
+  name                        = var.bucket_name
   location                    = "US"
   uniform_bucket_level_access = true
   force_destroy               = true

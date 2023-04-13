@@ -40,5 +40,5 @@ runs:
       shell: bash
 
     - name: Terraform Apply
-      run: terraform -chdir="./terraform" apply -auto-approve -var="name=$GCP_PROJECT-raw-data"
+      run: terraform -chdir="./terraform" apply -auto-approve -var="bucket_name=$GCP_PROJECT-raw-data"
       shell: bash
