@@ -10,24 +10,19 @@ provider "google" {
 }
 
 resource "google_storage_bucket" "data-lake-bucket" {
-  name          = "be-kkuznets-vulnerable-vine-lalala" # Concatenating DL bucket & Project name for unique naming
-  location      = "EU"
-
-  # Optional, but recommended settings:
+  name                        = "raw-crypto-market-data"
+  location                    = "US"
   uniform_bucket_level_access = true
-
+  force_destroy               = true
   versioning {
-    enabled     = true
+    enabled = true
   }
+}
 
-  lifecycle_rule {
-    action {
-      type = "Delete"
-    }
-    condition {
-      age = 30  // days
-    }
-  }
-
-  force_destroy = true
+resource "google_bigquery_dataset" "dataset" {
+  dataset_id                 = "crypto-market-data"
+  friendly_name              = "Crypto Market Data"
+  description                = "Dataset for crypto market analysis"
+  location                   = "US"
+  delete_contents_on_destroy = true
 }

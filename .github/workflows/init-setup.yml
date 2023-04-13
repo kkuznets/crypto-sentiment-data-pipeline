@@ -5,49 +5,49 @@ on:
       region:
         description: GCP region
         required: true
-        default: 'us-central1'
+        default: "us-central1"
         type: string
       zone:
         description: Zone in the selected GCP region
         required: true
-        default: 'us-central1-a'
+        default: "us-central1-a"
         type: string
       artifact_repository:
         description: Artifact Registry Repository
         required: true
-        default: 'binance-transactions'
+        default: "prefect-agent-image"
         type: string
       machine_type:
         description: GCP Compute Engine instance type
         required: true
-        default: 'e2-micro'
+        default: "e2-micro"
         type: string
       machine_name:
-        description: 'GCP Compute Engine instance name'
+        description: "GCP Compute Engine instance name"
         required: false
-        default: "binance-transactions"
+        default: "prefect-agent"
       gcp_creds_block_name:
-        description: 'GCP Credentials block name'
+        description: "GCP Credentials block name"
         required: false
         default: "default"
         type: string
       github_block_name:
-        description: 'GitHub block name'
+        description: "GitHub block name"
         required: false
         default: "default"
         type: string
       cloudrun_block_name:
-        description: 'CloudRunJob block name'
+        description: "CloudRunJob block name"
         required: false
         default: "default"
         type: string
       deployment:
-        description: 'Prefect deployment name'
+        description: "Prefect deployment name"
         required: false
         default: "default"
         type: string
       queue:
-        description: 'Prefect queue name'
+        description: "Prefect queue name"
         required: false
         default: "default"
         type: string
@@ -64,7 +64,7 @@ jobs:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          image_name: 'deployments'
+          image_name: "deployments"
           region: ${{ github.event.inputs.region }}
           dockerfile_path: Dockerfile
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
@@ -98,7 +98,7 @@ jobs:
           region: ${{ github.event.inputs.region }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          image_name: 'deployments'
+          image_name: "deployments"
           python_version: "3.10"
           install_command: "pip install ."
 
@@ -142,3 +142,17 @@ jobs:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           python_version: "3.10"
           install_command: "pip install ."
+
+  setup_gcp:
+    name: Setup GCP services
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - id: infra
+        name: Setup infrastructure
+        uses: ./.github/actions/setup-infra
+      - id: superset
+        name: Setup Superset
+        uses: ./.github/actions/setup-superset
+
