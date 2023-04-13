@@ -18,7 +18,7 @@ on:
         default: "prefect-images"
         type: string
       machine_name:
-        description: Prefect Agent VM name
+        description: Prefect agent VM name
         required: true
         default: "prefect-agent"
       gcs_location:
@@ -52,26 +52,20 @@ on:
         default: "default"
         type: string
 jobs:
-  setup_gcp:
-    name: Setup GCP services
+  setup_infra:
+    name: Setup GCP infrastructure
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - id: infra
-        name: Setup infra
+      - id: gcs_bq
+        name: Setup GCS Bucket and Bigquery Dataset
         uses: ./.github/actions/setup-infra
         with:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           gcs_location: ${{ github.event.inputs.gcs_location }}
           bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
           dataset_name: ${{ github.event.inputs.dataset_name }}
-          
-  deploy-agent:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - id: build-image
         name: Build Prefect agent docker image
         uses: ./.github/actions/build-image
@@ -84,7 +78,7 @@ jobs:
           dockerfile_path: Dockerfile
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
       - id: deploy-vm
-        name: Deploy Prefect agent
+        name: Deploy Prefect agent VM
         uses: ./.github/actions/deploy-vm
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
@@ -109,9 +103,13 @@ jobs:
           gcp_creds_block_name: ${{ github.event.inputs.prefect_block_name }}
           github_block_name: ${{ github.event.inputs.prefect_block_name }}
           cloudrun_block_name: ${{ github.event.inputs.prefect_block_name }}
+          gcs_block_name: ${{ github.event.inputs.prefect_block_name }}
+          bq_block_name: ${{ github.event.inputs.prefect_block_name }}
           region: ${{ github.event.inputs.region }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
+          bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
           image_name: "deployments"
           python_version: "3.10"
           install_command: "pip install ."

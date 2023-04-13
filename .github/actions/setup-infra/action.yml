@@ -14,11 +14,11 @@ inputs:
   bucket_suffix:
     description: 'GCS bucket suffix'
     required: false
-    default: 'raw-crypto-data'
+    default: 'raw_crypto_data'
   dataset_name:
     description: 'BigQuery dataset name'
     required: false
-    default: 'crypto-data'
+    default: 'crypto_data'
 
 runs:
   using: "composite"
