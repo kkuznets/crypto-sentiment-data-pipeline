@@ -26,6 +26,11 @@ inputs:
     required: true
     default: "raw-crypto-data"
     type: string
+  artifact_repository:
+    description: Artifact Registry Repository
+    required: true
+    default: "prefect-images"
+    type: string
   dataset_name:
     description: BigQuery dataset name
     required: true

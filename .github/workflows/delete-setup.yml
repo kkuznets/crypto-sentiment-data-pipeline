@@ -70,6 +70,7 @@ jobs:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
           dataset_name: ${{ github.event.inputs.dataset_name }}
+          artifact_repository: ${{ github.event.inputs.artifact_repository }}
 
   delete-flows:
     name: Delete Prefect flows
