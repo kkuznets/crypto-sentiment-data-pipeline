@@ -56,12 +56,6 @@ runs:
       shell: bash
 
     - name: Terraform Destroy
-      run: |
-        terraform -chdir="./terraform" destroy \
-        -auto-approve \
-        -var="bucket_name=$GCP_PROJECT-${{ inputs.bucket_suffix }}" \
-        -var="dataset_name=${{ inputs.dataset_name }}" \
-        -var="location=${{ inputs.gcs_location }}" \
-        -var="artifact_repository_name=${{ inputs.artifact_repository }}" \
-        -var="region=${{ inputs.region }}"
+      run:
+        terraform -chdir="./terraform" destroy
       shell: bash
