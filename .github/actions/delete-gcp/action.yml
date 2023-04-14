@@ -44,10 +44,18 @@ runs:
     - uses: hashicorp/setup-terraform@v2
 
     - name: Terraform Init
-      run: terraform init
+      run: terraform -chdir="./terraform" init
       shell: bash
 
-    - name: Terraform Destroy
+    - name: Terraform Format
+      run: terraform -chdir="./terraform" fmt
+      shell: bash
+
+    - name: Terraform Validate
+      run: terraform -chdir="./terraform" validate
+      shell: bash
+
+    - name: Terraform Apply
       run:
-        terraform apply -auto-approve
+        terraform destroy -auto-approve
       shell: bash
