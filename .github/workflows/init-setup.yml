@@ -60,7 +60,7 @@ jobs:
         uses: actions/checkout@v3
       - id: setup-gcp
         name: Setup GCP services
-        uses: ./.github/actions/setup-infra
+        uses: ./.github/actions/setup-gcp
         with:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           gcs_location: ${{ github.event.inputs.gcs_location }}

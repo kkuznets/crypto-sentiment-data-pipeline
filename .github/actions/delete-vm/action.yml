@@ -1,0 +1,40 @@
+name: 'Delete Prefect Cloud execution layer on Google Cloud Run'
+branding:
+  icon: cloud
+  color: yellow
+inputs:
+  prefect_api_key:
+    description: 'Prefect Cloud API key'
+    required: true
+  prefect_api_url:
+    description: 'Prefect Cloud API URL'
+    required: true
+  region:
+    description: 'GCP region'
+    required: false
+    default: 'us-central1'
+  zone:
+    description: 'GCP region with the zone'
+    required: false
+    default: 'us-central1-a'
+  machine_type:
+    description: 'GCP Compute Engine instance type'
+    required: false
+    default: 'e2-micro'
+  machine_name:
+    description: 'GCP Compute Engine instance name'
+    required: false
+    default: "binance-transactions"
+  gcp_credentials_json:
+    description: 'Content of the Service Account JSON key file'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - id: terminate-vm
+      name: Terminate existing VM instances
+      run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
+      shell: bash

@@ -1,4 +1,4 @@
-name: 'Delete Infra'
+name: 'Setup GCP services'
 branding:
   icon: cloud
   color: yellow
