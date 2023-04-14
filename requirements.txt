@@ -8,7 +8,9 @@ google-cloud-aiplatform
 gcsfs
 pandas
 pandas-gbq
-prefect-gcp==v0.1.8
+prefect-gcp
+prefect-gcp[cloud_storage]
+prefect-gcp[bigquery]
 psycopg2-binary
 pydata-google-auth
 pygit2
