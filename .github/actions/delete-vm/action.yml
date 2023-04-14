@@ -61,7 +61,7 @@ runs:
 
     - id: delete-ar
       name: Delete Artifact Repository
-      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --quiet --verbosity none
+      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --location=${{ inputs.region }} --quiet --verbosity none
       shell: bash
     
     - id: delete-bucket
