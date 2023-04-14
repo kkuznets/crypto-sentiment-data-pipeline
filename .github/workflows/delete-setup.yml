@@ -82,7 +82,7 @@ jobs:
   delete-flows:
     name: Delete Prefect flows
     runs-on: ubuntu-latest
-    needs: delete-blocks
+    needs: delete-infra
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
