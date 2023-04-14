@@ -49,10 +49,10 @@ runs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    - id: terminate-vm
-      name: Terminate existing VM instances
-      run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
-      shell: bash
+    # - id: terminate-vm
+    #   name: Terminate existing VM instances
+    #   run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
+    #   shell: bash
 
     - id: delete-ar
       name: Delete Artifact Repository
