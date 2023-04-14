@@ -1,4 +1,4 @@
-from prefect import flow, get_run_logger
+from prefect import flow, task, get_run_logger
 from platform import node, platform
 from sub import sub
 
