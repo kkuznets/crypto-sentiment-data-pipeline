@@ -41,13 +41,4 @@ runs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    - uses: hashicorp/setup-terraform@v2
-
-    - name: Terraform Init
-      run: terraform init
-      shell: bash
-
-    - name: Terraform Apply
-      run:
-        terraform destroy -auto-approve
-      shell: bash
+   

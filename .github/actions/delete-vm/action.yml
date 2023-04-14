@@ -21,6 +21,16 @@ inputs:
     description: 'GCP Compute Engine instance type'
     required: false
     default: 'e2-micro'
+  bucket_suffix:
+    description: Postfix for GCS bucket name
+    required: true
+    default: "raw-crypto-data"
+    type: string
+  dataset_name:
+    description: BigQuery dataset name
+    required: true
+    default: "crypto_data"
+    type: string
   machine_name:
     description: 'GCP Compute Engine instance name'
     required: false
@@ -31,6 +41,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: "${{ inputs.gcp_credentials_json }}"
+
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
@@ -38,3 +53,21 @@ runs:
       name: Terminate existing VM instances
       run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
       shell: bash
+
+    - id: delete-ar
+      name: Delete Artifact Repository
+      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --quiet --verbosity none
+      shell: bash
+    
+    - id: delete-bucket
+      name: Delete Cloud Storage bucket
+      run: gcloud storage rm --recursive gs://$GCP_PROJECT-${{ inputs.bucket_suffix }}/
+      shell: bash
+
+    - id: delete-dataset
+      name: Delete BigQuery dataset
+      run: bq rm -r -f $GCP_PROJECT:${{ inputs.dataset_name }}
+      shell: bash
+
+
+  

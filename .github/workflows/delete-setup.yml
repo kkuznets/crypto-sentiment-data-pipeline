@@ -58,16 +58,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - id: delete-gcp
-        name: Delete GCP services
-        uses: ./.github/actions/delete-gcp
-        with:
-          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          gcs_location: ${{ github.event.inputs.gcs_location }}
-          bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
-          dataset_name: ${{ github.event.inputs.dataset_name }}
-          artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          region: ${{ github.event.inputs.region }}
       - id: delete-vm
         name: Delete Prefect agent VM
         uses: ./.github/actions/delete-vm
@@ -78,6 +68,8 @@ jobs:
           zone: ${{ github.event.inputs.zone }}
           machine_name: ${{ github.event.inputs.machine_name }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
 
   delete-flows:
     name: Delete Prefect flows
