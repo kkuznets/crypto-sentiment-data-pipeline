@@ -106,6 +106,8 @@ runs:
         from prefect.filesystems import GitHub
         from prefect_gcp.cloud_run import CloudRunJob
         from prefect_gcp.credentials import GcpCredentials
+        from prefect_gcp.cloud_storage import GcsBucket
+        from prefect_gcp.bigquery import BigQueryWarehouse
 
         github_block = GitHub(repository="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY", reference="$GITHUB_REF_NAME")
         github_block.save("${{ inputs.github_block_name }}", overwrite=True)
