@@ -67,5 +67,5 @@ runs:
         credentials_json: "${{ inputs.gcp_credentials_json }}"
 
     - run: |
-        prefect deployment delete ${{ inputs.deployment }}
+        prefect deployment delete ${{ inputs.flow_entrypoint }}/${{ inputs.deployment }}
       shell: bash
