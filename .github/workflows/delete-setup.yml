@@ -1,4 +1,4 @@
-name: "Setup Infrastructure"
+name: "Delete Setup"
 on:
   workflow_dispatch:
     inputs:
@@ -18,15 +18,15 @@ on:
         default: "crypto_data"
         type: string
 jobs:
-  setup_gcp:
-    name: Setup GCP services
+  delete-gcp:
+    name: Delete GCP services
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
       - id: infra
-        name: Setup infra
-        uses: ./.github/actions/setup-infra
+        name: Destroy infrastructure
+        uses: ./.github/actions/delete-infra
         with:
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
           gcs_location: ${{ github.event.inputs.gcs_location }}

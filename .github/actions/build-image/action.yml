@@ -32,18 +32,9 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Authenticate to Google Cloud
-      uses: google-github-actions/auth@v1
-      with:
-        credentials_json: "${{ inputs.gcp_credentials_json }}"
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
-
-    - id: repository
-      run: gcloud artifacts repositories create ${{ inputs.artifact_repository }} --location=${{ inputs.region }} --repository-format=docker
-      continue-on-error: true
-      shell: bash
 
     - id: set-image
       run: |

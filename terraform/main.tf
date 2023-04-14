@@ -9,6 +9,13 @@ terraform {
 provider "google" {
 }
 
+resource "google_artifact_registry_repository" "my-repo" {
+  location      = var.region
+  repository_id = var.artifact_repository_name
+  description   = "Repo for Prefect agent images"
+  format        = "DOCKER"
+}
+
 resource "google_storage_bucket" "data-lake-bucket" {
   name                        = var.bucket_name
   location                    = var.location

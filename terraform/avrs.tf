@@ -15,3 +15,15 @@ variable "location" {
     description = "Location of the bucket and dataset"
     default     = "US"
 }
+
+variable "region" {
+    type        = string
+    description = "GCP region"
+    default     = "us-central1"
+}
+
+variable "artifact_repository_name" {
+    type        = string
+    description = "Artifact repository with Prefect agent images"
+    default     = "prefect-agent-images"
+}
