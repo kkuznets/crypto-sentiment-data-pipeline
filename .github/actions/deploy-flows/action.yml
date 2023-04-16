@@ -70,7 +70,3 @@ runs:
         prefect deployment build ${{ inputs.flow_entrypoint }} -n ${{ inputs.deployment }} -q ${{ inputs.queue }} \
         -sb "${{ inputs.github_block_name }}" -ib "${{ inputs.cloudrun_block_name }}" --skip-upload -a -v $GITHUB_SHA
       shell: bash
-
-    - run: |
-        prefect deployment apply ${{ inputs.deployment }}
-      shell: bash
