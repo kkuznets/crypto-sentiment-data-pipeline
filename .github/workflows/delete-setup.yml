@@ -52,15 +52,15 @@ on:
         default: "default"
         type: string
 jobs:
-  delete-infra:
+  delete-infrastructure:
     name: Delete GCP infrastructure
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - id: delete-vm
-        name: Delete Prefect agent VM
-        uses: ./.github/actions/delete-vm
+      - id: delete-infra
+        name: Delete infrastructure
+        uses: ./.github/actions/delete-infra
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
@@ -75,7 +75,7 @@ jobs:
   collect-flows:
     name: Collect Prefect flows
     runs-on: ubuntu-latest
-    needs: delete-infra
+    needs: delete-infrastructure
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
@@ -96,11 +96,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: get-flow
-        name: Delete Prefect flows
+        name: Get Prefect flow entrypoint
         run: |
           export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
           echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
-      - id: deploy
+      - id: delete-deployment
         name: Delete Prefect deployment
         uses: ./.github/actions/delete-deployment
         with:

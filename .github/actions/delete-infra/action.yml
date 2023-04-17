@@ -54,24 +54,24 @@ runs:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
 
-    - id: terminate-vm
-      name: Terminate existing VM instances
-      run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet --verbosity none
+    - id: delete-vm
+      name: Delete existing VM instances
+      run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}"
       shell: bash
 
     - id: delete-ar
       name: Delete Artifact Repository
-      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --location=${{ inputs.region }} --quiet --verbosity none
+      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --location=${{ inputs.region }}
       shell: bash
     
     - id: delete-bucket
       name: Delete Cloud Storage bucket
-      run: gcloud storage rm --recursive gs://$GCP_PROJECT-${{ inputs.bucket_suffix }}/ --quiet --verbosity none
+      run: gcloud storage rm --recursive gs://$GCP_PROJECT-${{ inputs.bucket_suffix }}/
       shell: bash
 
     - id: delete-dataset
       name: Delete BigQuery dataset
-      run: bq rm -r -f -d --quiet $GCP_PROJECT:${{ inputs.dataset_name }}
+      run: bq rm -r -f -d $GCP_PROJECT:${{ inputs.dataset_name }}
       shell: bash
 
 

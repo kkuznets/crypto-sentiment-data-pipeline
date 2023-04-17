@@ -141,7 +141,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - id: get-flow
-        name: Build Prefect flows
+        name: Get Prefect flow entrypoint
         run: |
           export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
           echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
