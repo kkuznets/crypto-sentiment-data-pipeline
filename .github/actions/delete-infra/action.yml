@@ -56,22 +56,22 @@ runs:
 
     - id: delete-vm
       name: Delete existing VM instances
-      run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}"
+      run: gcloud compute instances delete "${{ inputs.machine_name }}" --zone "${{ inputs.zone }}" --quiet verbosity-level none
       shell: bash
 
     - id: delete-ar
       name: Delete Artifact Repository
-      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --location=${{ inputs.region }}
+      run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --location=${{ inputs.region }} --quiet verbosity-level none
       shell: bash
     
     - id: delete-bucket
       name: Delete Cloud Storage bucket
-      run: gcloud storage rm --recursive gs://$GCP_PROJECT-${{ inputs.bucket_suffix }}/
+      run: gcloud storage rm --recursive gs://$GCP_PROJECT-${{ inputs.bucket_suffix }}/ --quiet verbosity-level none
       shell: bash
 
     - id: delete-dataset
       name: Delete BigQuery dataset
-      run: bq rm -r -f -d $GCP_PROJECT:${{ inputs.dataset_name }}
+      run: bq rm -r -f -d --quiet $GCP_PROJECT:${{ inputs.dataset_name }}
       shell: bash
 
 
