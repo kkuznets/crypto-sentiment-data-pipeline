@@ -137,3 +137,6 @@ dmypy.json
 .vscode/
 .tmp/
 *-deployment.yaml
+
+# temp
+extract-data.ipynb

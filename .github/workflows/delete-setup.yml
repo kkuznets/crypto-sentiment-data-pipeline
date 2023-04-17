@@ -72,8 +72,8 @@ jobs:
           dataset_name: ${{ github.event.inputs.dataset_name }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
 
-  delete-flows:
-    name: Delete Prefect flows
+  collect-flows:
+    name: Collect Prefect flows
     runs-on: ubuntu-latest
     needs: delete-infra
     outputs:
@@ -87,26 +87,26 @@ jobs:
 
   delete-deployment:
     name: Delete Prefect deployment
-    needs: delete-flows
+    needs: collect-flows
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flows: ${{ fromJson(needs.delete-flows.outputs.matrix) }}
+        flows: ${{ fromJson(needs.collect-flows.outputs.matrix) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - id: flow
+      - id: get-flow
         name: Delete Prefect flows
         run: |
           export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
           echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
       - id: deploy
         name: Delete Prefect deployment
-        uses: ./.github/actions/delete-flows
+        uses: ./.github/actions/delete-deployment
         with:
           prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
           prefect_api_url: ${{ secrets.PREFECT_API_URL }}
-          flow_entrypoint: ${{ steps.flow.outputs.entrypoint }}
+          flow_entrypoint: ${{ steps.get-flow.outputs.entrypoint }}
           deployment: ${{ github.event.inputs.deployment }}
           queue: ${{ github.event.inputs.queue }}
           github_block_name: github/${{ github.event.inputs.prefect_block_name }}

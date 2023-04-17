@@ -71,7 +71,7 @@ runs:
 
     - id: delete-dataset
       name: Delete BigQuery dataset
-      run: bq rm -r -f -d $GCP_PROJECT:${{ inputs.dataset_name }} --quiet
+      run: bq rm -r -f -d --quiet $GCP_PROJECT:${{ inputs.dataset_name }}
       shell: bash
 
 
