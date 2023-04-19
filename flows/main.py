@@ -78,7 +78,7 @@ def get_sentiment(
     return pd.DataFrame(articles_data)
 
 
-@flow(name="Extract Data", log_prints=True)
+@flow(log_prints=True)
 def main(
     time_from: str = "20220410T3421",
     time_to: str = "20220412T3421",

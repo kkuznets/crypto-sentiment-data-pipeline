@@ -58,6 +58,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - id: setup-gcp
         name: Setup GCP services
         uses: ./.github/actions/setup-gcp
@@ -68,6 +69,15 @@ jobs:
           dataset_name: ${{ github.event.inputs.dataset_name }}
           artifact_repository: ${{ github.event.inputs.artifact_repository }}
           region: ${{ github.event.inputs.region }}
+        env:
+          # Cache key for GCP services setup step
+          CACHE_KEY: ${{ runner.os }}-gcp-setup-${{ github.event.inputs.region }}-${{ github.event.inputs.zone }}-${{ github.event.inputs.artifact_repository }}-${{ github.event.inputs.gcs_location }}-${{ github.event.inputs.bucket_suffix }}-${{ github.event.inputs.dataset_name }}
+        # Cache GCP services setup step
+        if: ${{ steps.setup-gcp.outputs.cache-hit != 'true' }}
+        env:
+          CACHE_RESULT: ${{ steps.setup-gcp.outputs.cache-hit }}
+        run: echo ::set-output name=cache-hit::$CACHE_RESULT >> $GITHUB_ENV
+
       - id: setup-image
         name: Build Prefect agent image
         uses: ./.github/actions/setup-image
@@ -79,6 +89,15 @@ jobs:
           region: ${{ github.event.inputs.region }}
           dockerfile_path: Dockerfile
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+        env:
+          # Cache key for Prefect agent image setup step
+          CACHE_KEY: ${{ runner.os }}-prefect-image-setup-${{ github.event.inputs.region }}-${{ github.event.inputs.artifact_repository }}
+        # Cache Prefect agent image setup step
+        if: ${{ steps.setup-image.outputs.cache-hit != 'true' }}
+        env:
+          CACHE_RESULT: ${{ steps.setup-image.outputs.cache-hit }}
+        run: echo ::set-output name=cache-hit::$CACHE_RESULT >> $GITHUB_ENV
+
       - id: setup-vm
         name: Deploy Prefect agent VM
         uses: ./.github/actions/setup-vm
@@ -89,6 +108,9 @@ jobs:
           zone: ${{ github.event.inputs.zone }}
           machine_name: ${{ github.event.inputs.machine_name }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+        env:
+          # Cache key for Prefect agent VM setup step
+          CACHE_KEY: $
 
   setup-blocks:
     name: Setup Prefect blocks
@@ -97,6 +119,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        
       - id: setup-blocks
         name: Create Prefect blocks
         uses: ./.github/actions/setup-blocks
@@ -126,6 +149,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - id: set-matrix
         name: Collect Prefect flows
         run: echo "matrix=$(ls flows/*.py | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
@@ -140,11 +164,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - id: get-flow
         name: Get Prefect flow entrypoint
         run: |
           export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
           echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
+
       - id: setup-deployment
         name: Setup Prefect deployment
         uses: ./.github/actions/setup-deployment
