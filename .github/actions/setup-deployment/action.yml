@@ -16,37 +16,37 @@ inputs:
   deployment:
     description: 'Prefect deployment name - could reference environment or branch name e.g. dev or prod'
     required: false
-    default: "default"
+    default: 'default'
   queue:
     description: 'Prefect queue name'
     required: false
-    default: "default"
+    default: 'default'
   github_block_name:
     description: 'Name of the storage block'
     required: false
-    default: "github/default"
+    default: 'github/default'
   cloudrun_block_name:
     description: 'Name of the infrastructure block'
     required: false
-    default: "cloud-run-job/default"
+    default: 'cloud-run-job/default'
   python_version:
     description: 'Python version'
     required: false
-    default: "3.10"
+    default: '3.10'
   install_command:
     description: 'Can be set to e.g. pip install -r requirements.txt'
     required: false
-    default: "pip install ."
+    default: 'pip install .'
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "${{ inputs.python_version }}"
+        python-version: '${{ inputs.python_version }}'
         cache: 'pip'
 
     - id: install-prefect
@@ -64,7 +64,7 @@ runs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: "${{ inputs.gcp_credentials_json }}"
+        credentials_json: '${{ inputs.gcp_credentials_json }}'
 
     - run: |
         prefect deployment build ${{ inputs.flow_entrypoint }} -n ${{ inputs.deployment }} -q ${{ inputs.queue }} \

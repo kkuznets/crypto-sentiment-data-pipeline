@@ -1,4 +1,4 @@
-name: 'Initial Setup'
+name: 'Reset Deployment'
 on:
   workflow_dispatch:
     inputs:
@@ -52,48 +52,9 @@ on:
         default: 'default'
         type: string
 jobs:
-  setup-infra:
-    name: Setup GCP infrastructure
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - id: setup-gcp
-        name: Setup GCP services
-        uses: ./.github/actions/setup-gcp
-        with:
-          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          gcs_location: ${{ github.event.inputs.gcs_location }}
-          bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
-          dataset_name: ${{ github.event.inputs.dataset_name }}
-          artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          region: ${{ github.event.inputs.region }}
-      - id: setup-image
-        name: Build Prefect agent image
-        uses: ./.github/actions/setup-image
-        with:
-          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
-          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
-          artifact_repository: ${{ github.event.inputs.artifact_repository }}
-          image_name: 'deployments'
-          region: ${{ github.event.inputs.region }}
-          dockerfile_path: Dockerfile
-          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-      - id: setup-vm
-        name: Deploy Prefect agent VM
-        uses: ./.github/actions/setup-vm
-        with:
-          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
-          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
-          region: ${{ github.event.inputs.region }}
-          zone: ${{ github.event.inputs.zone }}
-          machine_name: ${{ github.event.inputs.machine_name }}
-          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-
   setup-blocks:
     name: Setup Prefect blocks
     runs-on: ubuntu-latest
-    needs: setup-infra
     steps:
       - name: Checkout
         uses: actions/checkout@v3

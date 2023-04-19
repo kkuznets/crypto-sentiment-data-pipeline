@@ -25,12 +25,12 @@ inputs:
   machine_name:
     description: 'GCP Compute Engine instance name'
     required: false
-    default: "binance-transactions"
+    default: 'binance-transactions'
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1

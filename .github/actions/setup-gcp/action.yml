@@ -7,12 +7,12 @@ inputs:
   region:
     description: GCP region
     required: true
-    default: "us-central1"
+    default: 'us-central1'
     type: string
   artifact_repository:
     description: Artifact Registry Repository
     required: true
-    default: "prefect-images"
+    default: 'prefect-images'
     type: string
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
@@ -31,12 +31,12 @@ inputs:
     default: 'crypto_data'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: "${{ inputs.gcp_credentials_json }}"
+        credentials_json: '${{ inputs.gcp_credentials_json }}'
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
