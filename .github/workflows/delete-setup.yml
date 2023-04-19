@@ -99,7 +99,7 @@ jobs:
         name: Get Prefect flow entrypoint
         run: |
           export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
-          echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
+          echo "entrypoint=$FLOW_NAME" >> $GITHUB_OUTPUT
       - id: delete-deployment
         name: Delete Prefect deployment
         uses: ./.github/actions/delete-deployment
