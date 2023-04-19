@@ -79,7 +79,7 @@ def get_sentiment(
 
 
 @flow(name="Extract Data", log_prints=True)
-def extract_data() -> None:
+def main() -> None:
     """
     Calls the `get_sentiment` function with sample arguments and prints
     the first five rows of the resulting dataframe.
@@ -92,4 +92,4 @@ def extract_data() -> None:
 if __name__ == "__main__":
     logger = get_run_logger()
     logger.info("Network: %s. Instance: %s. Agent is healthy ✅️", node(), platform())
-    extract_data()
+    main()
