@@ -79,17 +79,27 @@ def get_sentiment(
 
 
 @flow(name="Extract Data", log_prints=True)
-def main() -> None:
+def main(
+    time_from: str = "20220410T3421",
+    time_to: str = "20220412T3421",
+    apikey: str = "",
+) -> None:
     """
     Calls the `get_sentiment` function with sample arguments and prints
     the first five rows of the resulting dataframe.
     """
 
-    sentiment = get_sentiment()
+    sentiment = get_sentiment(
+        time_from,
+        time_to,
+        apikey,
+    )
     print(sentiment.head())
 
 
 if __name__ == "__main__":
+
     logger = get_run_logger()
     logger.info("Network: %s. Instance: %s. Agent is healthy ✅️", node(), platform())
+
     main()
