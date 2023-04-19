@@ -1,0 +1,123 @@
+name: 'Reset Deployment'
+on:
+  workflow_dispatch:
+    inputs:
+      region:
+        description: GCP region
+        required: true
+        default: 'us-central1'
+        type: string
+      zone:
+        description: Zone in the selected GCP region
+        required: true
+        default: 'us-central1-a'
+        type: string
+      artifact_repository:
+        description: Artifact Registry Repository
+        required: true
+        default: 'prefect-images'
+        type: string
+      machine_name:
+        description: Prefect agent VM name
+        required: true
+        default: 'prefect-agent'
+      gcs_location:
+        description: Location of the GCS bucket
+        required: true
+        default: 'US'
+        type: string
+      bucket_suffix:
+        description: Postfix for GCS bucket name
+        required: true
+        default: 'raw-crypto-data'
+        type: string
+      dataset_name:
+        description: BigQuery dataset name
+        required: true
+        default: 'crypto_data'
+        type: string
+      prefect_block_name:
+        description: Standard Prefect blocks name
+        required: true
+        default: 'default'
+        type: string
+      deployment:
+        description: Prefect deployment name
+        required: true
+        default: 'default'
+        type: string
+      queue:
+        description: Prefect queue name
+        required: true
+        default: 'default'
+        type: string
+jobs:
+  setup-blocks:
+    name: Setup Prefect blocks
+    runs-on: ubuntu-latest
+    needs: setup-infra
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - id: setup-blocks
+        name: Create Prefect blocks
+        uses: ./.github/actions/setup-blocks
+        with:
+          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
+          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
+          gcp_creds_block_name: ${{ github.event.inputs.prefect_block_name }}
+          github_block_name: ${{ github.event.inputs.prefect_block_name }}
+          cloudrun_block_name: ${{ github.event.inputs.prefect_block_name }}
+          gcs_block_name: ${{ github.event.inputs.prefect_block_name }}
+          bq_block_name: ${{ github.event.inputs.prefect_block_name }}
+          region: ${{ github.event.inputs.region }}
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          artifact_repository: ${{ github.event.inputs.artifact_repository }}
+          bucket_suffix: ${{ github.event.inputs.bucket_suffix }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
+          image_name: 'deployments'
+          python_version: '3.10'
+          install_command: 'pip install .'
+
+  collect-flows:
+    name: Collect Prefect flows
+    runs-on: ubuntu-latest
+    needs: setup-blocks
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - id: set-matrix
+        name: Collect Prefect flows
+        run: echo "matrix=$(ls flows/*.py | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+
+  setup-deployment:
+    name: Setup Prefect deployment
+    needs: collect-flows
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flows: ${{ fromJson(needs.collect-flows.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - id: get-flow
+        name: Get Prefect flow entrypoint
+        run: |
+          export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
+          echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
+      - id: setup-deployment
+        name: Setup Prefect deployment
+        uses: ./.github/actions/setup-deployment
+        with:
+          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
+          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
+          flow_entrypoint: ${{ steps.get-flow.outputs.entrypoint }}
+          deployment: ${{ github.event.inputs.deployment }}
+          queue: ${{ github.event.inputs.queue }}
+          github_block_name: github/${{ github.event.inputs.prefect_block_name }}
+          cloudrun_block_name: cloud-run-job/${{ github.event.inputs.prefect_block_name }}
+          gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+          python_version: '3.10'
+          install_command: 'pip install .'
