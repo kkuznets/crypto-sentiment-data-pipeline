@@ -78,7 +78,7 @@ def get_sentiment(
     return pd.DataFrame(articles_data)
 
 
-@flow(name="Extract Data", print_logs=True)
+@flow(name="Extract Data", log_prints=True)
 def extract_data() -> None:
     """
     Calls the `get_sentiment` function with sample arguments and prints
