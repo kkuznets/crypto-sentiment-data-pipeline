@@ -122,7 +122,7 @@ runs:
 
         # Save GCP credentials block
         gcp_credentials_block = GcpCredentials(
-            service_account_info="${{ inputs.gcp_credentials_json }}"
+            service_account_info=${{ inputs.gcp_credentials_json }}
         )
         gcp_credentials_block.save(
             "${{ inputs.gcp_creds_block_name }}",
@@ -146,11 +146,11 @@ runs:
         )
 
         # Save GCS bucket block to storage
-        gcs_bucket = GcsBucket(
-            bucket='"$GCP_PROJECT"-"${{ inputs.bucket_suffix }}"',
+        gcs_block = GcsBucket(
+            bucket="$GCP_PROJECT-${{ inputs.bucket_suffix }}",
             gcp_credentials=gcp_credentials,
         )
-        gcs_bucket.save(
+        gcs_block.save(
             "${{ inputs.gcs_block_name }}",
             overwrite=True,
         )
