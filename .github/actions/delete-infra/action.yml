@@ -24,32 +24,32 @@ inputs:
   bucket_suffix:
     description: Postfix for GCS bucket name
     required: true
-    default: "raw-crypto-data"
+    default: 'raw-crypto-data'
     type: string
   artifact_repository:
     description: Artifact Registry Repository
     required: true
-    default: "prefect-images"
+    default: 'prefect-images'
     type: string
   dataset_name:
     description: BigQuery dataset name
     required: true
-    default: "crypto_data"
+    default: 'crypto_data'
     type: string
   machine_name:
     description: 'GCP Compute Engine instance name'
     required: false
-    default: "binance-transactions"
+    default: 'binance-transactions'
   gcp_credentials_json:
     description: 'Content of the Service Account JSON key file'
     required: true
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: "${{ inputs.gcp_credentials_json }}"
+        credentials_json: '${{ inputs.gcp_credentials_json }}'
 
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
@@ -63,7 +63,7 @@ runs:
       name: Delete Artifact Repository
       run: gcloud artifacts repositories delete ${{ inputs.artifact_repository }} --location=${{ inputs.region }} --quiet verbosity-level none
       shell: bash
-    
+
     - id: delete-bucket
       name: Delete Cloud Storage bucket
       run: gcloud storage rm --recursive gs://$GCP_PROJECT-${{ inputs.bucket_suffix }}/ --quiet verbosity-level none
@@ -73,6 +73,3 @@ runs:
       name: Delete BigQuery dataset
       run: bq rm -r -f -d --quiet $GCP_PROJECT:${{ inputs.dataset_name }}
       shell: bash
-
-
-  

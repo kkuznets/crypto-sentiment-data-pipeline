@@ -1,55 +1,55 @@
-name: "Delete Setup"
+name: 'Delete Setup'
 on:
   workflow_dispatch:
     inputs:
       region:
         description: GCP region
         required: true
-        default: "us-central1"
+        default: 'us-central1'
         type: string
       zone:
         description: Zone in the selected GCP region
         required: true
-        default: "us-central1-a"
+        default: 'us-central1-a'
         type: string
       artifact_repository:
         description: Artifact Registry Repository
         required: true
-        default: "prefect-images"
+        default: 'prefect-images'
         type: string
       machine_name:
         description: Prefect agent VM name
         required: true
-        default: "prefect-agent"
+        default: 'prefect-agent'
       gcs_location:
         description: Location of the GCS bucket
         required: true
-        default: "US"
+        default: 'US'
         type: string
       bucket_suffix:
         description: Postfix for GCS bucket name
         required: true
-        default: "raw-crypto-data"
+        default: 'raw-crypto-data'
         type: string
       dataset_name:
         description: BigQuery dataset name
         required: true
-        default: "crypto_data"
+        default: 'crypto_data'
         type: string
       prefect_block_name:
         description: Standard Prefect blocks name
         required: true
-        default: "default"
+        default: 'default'
         type: string
       deployment:
         description: Prefect deployment name
         required: true
-        default: "default"
+        default: 'default'
         type: string
       queue:
         description: Prefect queue name
         required: true
-        default: "default"
+        default: 'default'
         type: string
 jobs:
   delete-infrastructure:
@@ -112,6 +112,5 @@ jobs:
           github_block_name: github/${{ github.event.inputs.prefect_block_name }}
           cloudrun_block_name: cloud-run-job/${{ github.event.inputs.prefect_block_name }}
           gcp_credentials_json: ${{ secrets.GCP_CREDENTIALS }}
-          python_version: "3.10"
-          install_command: "pip install ."
-
+          python_version: '3.10'
+          install_command: 'pip install .'
