@@ -1,0 +1,85 @@
+name: "Setup Prefect Deployment"
+description: "Deploy flows to Prefect Cloud and Google Cloud Run"
+branding:
+  icon: cloud
+  color: yellow
+inputs:
+  av_api_key:
+    description: "Alpha Vantage API key"
+    required: true
+  bucket_name:
+    description: Postfix for GCS bucket name
+    required: false
+    default: "raw-crypto-data"
+  dataset_name:
+    description: BigQuery dataset name
+    required: false
+    default: "crypto_data"
+  gcp_credentials:
+    description: "Content of the Service Account JSON key file"
+    required: true
+  prefect_api_key:
+    description: "Prefect Cloud API key"
+    required: true
+  prefect_api_url:
+    description: "Prefect Cloud API URL"
+    required: true
+  flow_entrypoint:
+    description: "Prefect flow entrypoint e.g. myflow.py:flow_function"
+    required: true
+  prefect_block:
+    description: Standard Prefect blocks name
+    required: false
+    default: "default"
+  prefect_deployment:
+    description: "Prefect deployment name"
+    required: false
+    default: "default"
+  prefect_queue:
+    description: "Prefect queue name"
+    required: false
+    default: "default"
+
+runs:
+  using: "composite"
+  steps:
+    - id: setup-python
+      name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - id: install-poetry
+      name: Install and configure Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-in-project: true
+
+    - id: install-dependencies
+      name: "Install dependencies"
+      run: poetry install --no-root --without dev
+      shell: bash
+
+    - id: login-prefect
+      name: Login to Prefect Cloud
+      run: |
+        poetry run prefect config set PREFECT_API_KEY=${{ inputs.prefect_api_key }}
+        poetry run prefect config set PREFECT_API_URL=${{ inputs.prefect_api_url }}
+      shell: bash
+
+    - id: build-deployment
+      name: Build Prefect deployment
+      run: |
+        poetry run prefect deployment build ${{ inputs.flow_entrypoint }} \
+          --name ${{ inputs.prefect_deployment }} \
+          --work-queue ${{ inputs.prefect_queue }} \
+          --storage-block "github/${{ inputs.prefect_block }}" \
+          --infra-block "cloud-run-job/${{ inputs.prefect_block }}" \
+          --param av_api_key="${{ inputs.av_api_key }}" \
+          --param block_name="${{ inputs.prefect_block }}" \
+          --param dataset_name="${{ inputs.dataset_name }}" \
+          --param bucket_name="$GCP-PROJECT-${{ inputs.bucket_name }}" \     
+          --skip-upload \
+          --apply \
+          --version $GITHUB_SHA
+      shell: bash

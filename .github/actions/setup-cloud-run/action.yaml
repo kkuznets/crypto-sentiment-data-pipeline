@@ -1,0 +1,93 @@
+name: "Setup Prefect Agent"
+description: "Setup and deploy Prefect agent"
+branding:
+  icon: cloud
+  color: yellow
+inputs:
+  av_api_key:
+    description: "Alpha Vantage API key"
+    required: true
+  gcp_credentials:
+    description: "Content of the Service Account JSON key file"
+    required: true
+  prefect_api_key:
+    description: "Prefect Cloud API key"
+    required: true
+  prefect_api_url:
+    description: "Prefect Cloud API URL"
+    required: true
+  prefect_block:
+    description: Standard Prefect blocks name
+    required: false
+    default: "default"
+  gcp_region:
+    description: "GCP region"
+    required: false
+    default: "us-central1"
+  gcp_zone:
+    description: "GCP region with the zone"
+    required: false
+    default: "us-central1-a"
+  ar_repository:
+    description: "Artifact Registry Repository Name"
+    required: false
+    default: "prefect-images"
+  vm_type:
+    description: "GCP Compute Engine instance type"
+    required: false
+    default: "e2-micro"
+  vm_name:
+    description: "GCP Compute Engine instance name"
+    required: false
+    default: "prefect-agent"
+  bucket_name:
+    description: Postfix for GCS bucket name
+    required: false
+    default: "raw-crypto-data"
+  dataset_name:
+    description: BigQuery dataset name
+    required: false
+    default: "crypto_data"
+  dockerfile_path:
+    description: "Path and filename of the Dockerfile"
+    required: false
+    default: docker/deployments.Dockerfile
+
+runs:
+  using: "composite"
+  steps:
+    - id: set-image
+      name: Set Prefect agent docker image name
+      run: |
+        echo "RAW_IMAGE=${{ inputs.gcp_region }}-docker.pkg.dev/$GCP_PROJECT/${{ inputs.ar_repository }}/deployments" >> $GITHUB_ENV
+        echo "IMAGE_URI=${{ inputs.gcp_region }}-docker.pkg.dev/$GCP_PROJECT/${{ inputs.ar_repository }}/deployments:$GITHUB_SHA" >> $GITHUB_ENV
+        echo "uri=$(echo $IMAGE_URI)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - id: encode-gcp-creds
+      name: Encode GCP credentials
+      run: |
+        base64_encoded=$(echo -n "${{ inputs.gcp_credentials }}" | base64)
+        echo "GCP_CREDENTIALS_64=$(echo '$base64_encoded')" >> $GITHUB_ENV
+      shell: bash
+
+    - id: build-image
+      name: Build and push Prefect agent docker image
+      run: |
+        docker build \
+          --quiet \
+          --build-arg PREFECT_API_KEY=${{ inputs.prefect_api_key }} \
+          --build-arg PREFECT_API_URL=${{ inputs.prefect_api_url }} \
+          --build-arg PREFECT_BLOCK=${{ inputs.prefect_block }} \
+          --build-arg GCP_CREDENTIALS=${{ env.GCP_CREDENTIALS_64 }} \
+          --build-arg GCP_PROJECT=$GCP_PROJECT \
+          --build-arg GCP_REGION=${{ inputs.gcp_region }} \
+          --build-arg DATASET_NAME=${{ inputs.dataset_name }} \
+          --build-arg BUCKET_NAME=$GCP_PROJECT-${{ inputs.bucket_name }} \
+          --build-arg AV_API_KEY=${{ inputs.av_api_key }} \
+          --tag "${{ env.RAW_IMAGE }}" \
+          --file ${{ inputs.dockerfile_path }} .
+        docker tag "${{ env.RAW_IMAGE }}" "${{ env.IMAGE_URI }}"
+        docker push "${{ env.RAW_IMAGE }}"
+        docker push "${{ env.IMAGE_URI }}"
+      shell: bash

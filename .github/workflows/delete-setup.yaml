@@ -1,0 +1,95 @@
+name: "Delete Setup"
+on:
+  workflow_dispatch:
+    inputs:
+      gcp_region:
+        description: GCP region
+        required: true
+        default: "us-central1"
+        type: string
+      gcp_zone:
+        description: Zone in the selected GCP region
+        required: true
+        default: "us-central1-a"
+        type: string
+      ar_repository:
+        description: Artifact Registry Repository
+        required: true
+        default: "prefect-images"
+        type: string
+      vm_name:
+        description: Prefect agent VM name
+        required: true
+        default: "prefect-agent"
+      bucket_name:
+        description: Postfix for GCS bucket name
+        required: true
+        default: "raw-crypto-data"
+        type: string
+      dataset_name:
+        description: BigQuery dataset name
+        required: true
+        default: "crypto_data"
+        type: string
+
+jobs:
+  delete-infrastructure:
+    name: Delete infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - id: login-gcloud
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+      - id: setup-sdk
+        name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - id: delete-vm
+        name: Delete Prefect agent VM
+        run: |
+          gcloud compute instances delete "${{ github.event.inputs.vm_name }}" \
+            --zone="${{ github.event.inputs.gcp_zone }}" \
+            --quiet \
+            --verbosity=error
+        continue-on-error: true
+        shell: bash
+
+      - id: delete-ar
+        name: Delete AR repository
+        run: |
+          gcloud artifacts repositories delete ${{ github.event.inputs.ar_repository }} \
+            --location=${{ github.event.inputs.gcp_region }} \
+            --quiet \
+            --verbosity=error
+        continue-on-error: true
+        shell: bash
+
+      - id: delete-bucket
+        name: Delete GCS bucket
+        run: |
+          gcloud storage rm gs://$GCP_PROJECT-${{ github.event.inputs.bucket_name }}/ \
+            --recursive \
+            --quiet \
+            --verbosity=error
+        continue-on-error: true
+        shell: bash
+
+      - id: delete-dataset
+        name: Delete BigQuery dataset
+        run: |
+          bq rm \
+            --headless \
+            --recursive \
+            --force \
+            --dataset \
+            --quiet \
+            $GCP_PROJECT:${{ github.event.inputs.dataset_name }}
+        continue-on-error: true
+        shell: bash

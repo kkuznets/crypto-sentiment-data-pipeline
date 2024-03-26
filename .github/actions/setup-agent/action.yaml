@@ -1,0 +1,84 @@
+name: "Setup Prefect Agent"
+description: "Setup and deploy Prefect agent"
+branding:
+  icon: cloud
+  color: yellow
+inputs:
+  gcp_credentials:
+    description: "Content of the Service Account JSON key file"
+    required: true
+  prefect_api_key:
+    description: "Prefect Cloud API key"
+    required: true
+  prefect_api_url:
+    description: "Prefect Cloud API URL"
+    required: true
+  gcp_region:
+    description: "GCP region"
+    required: false
+    default: "us-central1"
+  gcp_zone:
+    description: "GCP region with the zone"
+    required: false
+    default: "us-central1-a"
+  ar_repository:
+    description: "Artifact Registry Repository Name"
+    required: false
+    default: "prefect-images"
+  vm_type:
+    description: "GCP Compute Engine instance type"
+    required: false
+    default: "e2-micro"
+  vm_name:
+    description: "GCP Compute Engine instance name"
+    required: false
+    default: "prefect-agent"
+  dockerfile_path:
+    description: "Path and filename of the Dockerfile"
+    required: false
+    default: docker/agent.Dockerfile
+
+runs:
+  using: "composite"
+  steps:
+    - id: set-image
+      name: Set Prefect agent docker image name
+      run: |
+        echo "RAW_IMAGE=${{ inputs.gcp_region }}-docker.pkg.dev/$GCP_PROJECT/${{ inputs.ar_repository }}/agent" >> $GITHUB_ENV
+        echo "IMAGE_URI=${{ inputs.gcp_region }}-docker.pkg.dev/$GCP_PROJECT/${{ inputs.ar_repository }}/agent:$GITHUB_SHA" >> $GITHUB_ENV
+        echo "uri=$(echo $IMAGE_URI)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - id: login-gar
+      name: Login to GAR
+      uses: docker/login-action@v2
+      with:
+        registry: "${{ inputs.gcp_region }}-docker.pkg.dev"
+        username: _json_key
+        password: ${{ inputs.gcp_credentials }}
+
+    - id: build-image
+      name: Build and push Prefect agent docker image
+      run: |
+        docker build \
+          --quiet \
+          --build-arg PREFECT_API_KEY=${{ inputs.prefect_api_key }} \
+          --build-arg PREFECT_API_URL=${{ inputs.prefect_api_url }} \
+          --tag "${{ env.RAW_IMAGE }}" \
+          --file ${{ inputs.dockerfile_path }} .
+        docker tag "${{ env.RAW_IMAGE }}" "${{ env.IMAGE_URI }}"
+        docker push "${{ env.RAW_IMAGE }}"
+        docker push "${{ env.IMAGE_URI }}"
+      shell: bash
+
+    - id: deploy-vm
+      name: Deploy Prefect Agent VM
+      shell: bash
+      run: |
+        export EMAIL=$(cat $GOOGLE_GHA_CREDS_PATH | jq -r '.["client_email"]')
+        gcloud compute instances create-with-container ${{ inputs.vm_name }} \
+          --zone ${{ inputs.gcp_zone }} \
+          --machine-type ${{ inputs.vm_type }} \
+          --service-account $EMAIL \
+          --scopes "cloud-platform" \
+          --container-image "${{ env.IMAGE_URI }}"

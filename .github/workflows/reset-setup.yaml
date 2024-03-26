@@ -1,0 +1,155 @@
+name: "Reset Setup"
+on:
+  workflow_dispatch:
+    inputs:
+      gcp_region:
+        description: GCP region
+        required: true
+        default: "us-central1"
+        type: string
+      gcp_zone:
+        description: Zone in the GCP region
+        required: true
+        default: "us-central1-a"
+        type: string
+      ar_repository:
+        description: Artifact Registry Repository
+        required: true
+        default: "prefect-images"
+        type: string
+      vm_name:
+        description: Prefect agent VM name
+        required: true
+        default: "prefect-agent"
+      bucket_name:
+        description: Cloud Storage bucket name
+        required: true
+        default: "raw-crypto-data"
+        type: string
+      dataset_name:
+        description: BigQuery dataset name
+        required: true
+        default: "crypto_data"
+        type: string
+      prefect_block:
+        description: Prefect blocks name
+        required: true
+        default: "default"
+        type: string
+      prefect_deployment:
+        description: Prefect deployment name
+        required: true
+        default: "default"
+        type: string
+      prefect_queue:
+        description: Prefect queue name
+        required: true
+        default: "default"
+        type: string
+
+jobs:
+  setup-infra:
+    name: Reset infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - id: login-gcloud
+        name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+      - id: setup-sdk
+        name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - id: login-gar
+        name: Login to GAR
+        uses: docker/login-action@v2
+        with:
+          registry: "${{ github.event.inputs.gcp_region }}-docker.pkg.dev"
+          username: _json_key
+          password: ${{ secrets.GCP_CREDENTIALS }}
+
+      - id: setup-cloud-run
+        name: Reset Cloud Run environment
+        uses: ./.github/actions/setup-cloud-run
+        with:
+          ar_repository: ${{ github.event.inputs.ar_repository }}
+          bucket_name: ${{ github.event.inputs.bucket_name }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
+          gcp_credentials: ${{ secrets.GCP_CREDENTIALS }}
+          gcp_region: ${{ github.event.inputs.gcp_region }}
+          gcp_zone: ${{ github.event.inputs.gcp_zone }}
+          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
+          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
+          prefect_block: ${{ github.event.inputs.prefect_block }}
+          vm_name: ${{ github.event.inputs.vm_name }}
+
+      - id: setup-blocks
+        name: Reset Prefect blocks
+        uses: ./.github/actions/setup-blocks
+        with:
+          ar_repository: ${{ github.event.inputs.ar_repository }}
+          bucket_name: ${{ github.event.inputs.bucket_name }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
+          gcp_credentials: ${{ secrets.GCP_CREDENTIALS }}
+          gcp_region: ${{ github.event.inputs.gcp_region }}
+          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
+          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
+          prefect_block: ${{ github.event.inputs.prefect_block }}
+
+  collect-flows:
+    name: Collect Prefect flows
+    needs: setup-infra
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - id: set-matrix
+        name: Collect Prefect flows
+        run: |
+          echo "matrix=$(ls prefect/flows/*.py | jq -R -s -c 'split("\n")[:-1]')" \
+          >> $GITHUB_OUTPUT
+        shell: bash
+
+  setup-deployment:
+    name: Reset Prefect deployment
+    needs: collect-flows
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flows: ${{ fromJson(needs.collect-flows.outputs.matrix) }}
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v3
+
+      - id: get-flow
+        name: Get Prefect flow entrypoint
+        run: |
+          export FLOW_NAME=$(basename ${{ matrix.flows }} .py)
+          echo "entrypoint=${{ matrix.flows }}:$FLOW_NAME" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - id: setup-deployment
+        name: Setup Prefect deployment
+        uses: ./.github/actions/setup-deployment
+        with:
+          av_api_key: ${{ secrets.AV_API_KEY }}
+          bucket_name: ${{ github.event.inputs.bucket_name }}
+          dataset_name: ${{ github.event.inputs.dataset_name }}
+          flow_entrypoint: ${{ steps.get-flow.outputs.entrypoint }}
+          gcp_credentials: ${{ secrets.GCP_CREDENTIALS }}
+          prefect_api_key: ${{ secrets.PREFECT_API_KEY }}
+          prefect_api_url: ${{ secrets.PREFECT_API_URL }}
+          prefect_block: ${{ github.event.inputs.prefect_block }}
+          prefect_deployment: ${{ github.event.inputs.prefect_deployment }}
+          prefect_queue: ${{ github.event.inputs.prefect_queue }}

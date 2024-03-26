@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: crypto_data
+    schema:
+    tables:
+      - name: sentiments
+      - name: prices
+      - name: tokens

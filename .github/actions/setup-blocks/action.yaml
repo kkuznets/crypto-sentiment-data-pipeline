@@ -1,0 +1,142 @@
+name: "Setup Prefect Blocks"
+description: "Setup Prefect blocks"
+branding:
+  icon: cloud
+  color: yellow
+inputs:
+  gcp_credentials:
+    description: "Content of the Service Account JSON key file"
+    required: true
+  prefect_api_key:
+    description: "Prefect Cloud API key"
+    required: true
+  prefect_api_url:
+    description: "Prefect Cloud API URL"
+    required: true
+  prefect_block:
+    description: Standard Prefect blocks name
+    required: false
+    default: "default"
+  gcp_region:
+    description: GCP region
+    required: false
+    default: "us-central1"
+  ar_repository:
+    description: "Artifact Registry Repository Name"
+    required: false
+    default: "prefect-images"
+  ar_image_name:
+    description: "Artifact Registry Image Name"
+    required: false
+    default: "deployments"
+  bucket_name:
+    description: Postfix for GCS bucket name
+    required: false
+    default: "raw-crypto-data"
+  dataset_name:
+    description: BigQuery dataset name
+    required: false
+    default: "crypto_data"
+
+runs:
+  using: "composite"
+  steps:
+    - id: setup-python
+      name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - id: install-poetry
+      name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        virtualenvs-create: false
+
+    - uses: snok/install-poetry@v1
+    - run: poetry config virtualenvs.create false --local
+      shell: bash
+
+    - id: install-dependencies
+      name: Install dependencies
+      run: poetry install --no-root --without prefect,dev
+      shell: bash
+
+    - id: login-prefect
+      name: Login to Prefect Cloud
+      run: |
+        poetry run prefect config set PREFECT_API_KEY=${{ inputs.prefect_api_key }}
+        poetry run prefect config set PREFECT_API_URL=${{ inputs.prefect_api_url }}
+      shell: bash
+
+    - id: create-blocks
+      name: Create Prefect blocks
+      run: |
+        cat <<EOF > blocks.py
+        # Import necessary modules
+        from prefect.filesystems import GitHub
+        from prefect_gcp.cloud_run import CloudRunJob
+        from prefect_gcp.credentials import GcpCredentials
+        from prefect_gcp.cloud_storage import GcsBucket
+        from prefect_gcp.bigquery import BigQueryWarehouse
+
+        # Save GitHub storage block
+        github_block = GitHub(
+            repository="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY",
+            reference="$GITHUB_REF_NAME",
+        )
+        github_block.save(
+            "${{ inputs.prefect_block }}",
+            overwrite=True,
+        )
+
+        # Save GCP credentials block
+        gcp_credentials_block = GcpCredentials(
+            service_account_info=${{ inputs.gcp_credentials }}
+        )
+        gcp_credentials_block.save(
+            "${{ inputs.prefect_block }}",
+            overwrite=True,
+        )
+
+        # Load GCP credentials from storage
+        gcp_credentials = GcpCredentials.load("${{ inputs.prefect_block }}")
+
+        # Save CloudRun block to storage
+        cloudrun_block = CloudRunJob(
+            image="${{ env.IMAGE_URI }}",
+            region="${{ inputs.gcp_region }}",
+            credentials=gcp_credentials,
+            cpu=8,
+            memory=32,
+            memory_unit="Gi",
+            timeout=14400,
+        )
+        cloudrun_block.save(
+            "${{ inputs.prefect_block }}",
+            overwrite=True,
+        )
+
+        # Save GCS bucket block to storage
+        gcs_block = GcsBucket(
+            bucket="$GCP_PROJECT-${{ inputs.bucket_name }}",
+            gcp_credentials=gcp_credentials,
+        )
+        gcs_block.save(
+            "${{ inputs.prefect_block }}",
+            overwrite=True,
+        )
+
+        # Save BigQuery block to storage
+        bq_block = BigQueryWarehouse(
+            gcp_credentials=gcp_credentials,
+            fetch_size=1,
+        )
+        bq_block.save(
+            "${{ inputs.prefect_block }}",
+            overwrite=True,
+        )
+
+        EOF
+        python blocks.py
+      shell: bash
